@@ -38,7 +38,7 @@ p {
 	a.mail {
 		padding: 5px 15px;
 		margin: 0 -15px;
-		color: #5656ff;
+		color: #2d70ed;
 	}
 	
 		p > a:hover,
@@ -46,7 +46,7 @@ p {
 		a.mail:hover,
 		a.mail:focus {
 			margin-top: -4px;
-			color: #5656ff;
+			color: #2d70ed;
 			text-decoration: none;
 		}
 		
@@ -54,7 +54,7 @@ p {
 			p > a:focus > span,
 			a.mail:hover > span,
 			a.mail:focus > span {
-				border-bottom: 1px solid #5656ff;
+				border-bottom: 1px solid #2d70ed;
 			}
 			
 a.mail .far {
@@ -69,24 +69,8 @@ hr {
 	margin: 30px 0;
 }
 
-hr.alt {
-	margin-top: 0;
-	margin-bottom: 45px;
-}
-
 .btn.detail {
 	margin-bottom: 15px;
-}
-
-.btn-primary {
-	border-color: #5656ff;
-	background-color: #5656ff;
-}
-
-.btn-primary:hover,
-.btn-primary:focus {
-	border-color: #3434fa;
-	background-color: #3434fa;
 }
 
 .center-block {
@@ -113,18 +97,18 @@ hr.alt {
 	}
 	
 		.loggedInGreeting a {
-			color: #5656ff;;
+			color: #2d70ed;
 		}
 		
 		.loggedInGreeting a:hover,
 		.loggedInGreeting a:focus {
 			margin-top: -4px;
-			color: #5656ff;
+			color: #2d70ed;
 			text-decoration: none;
 		}
 			.loggedInGreeting a:hover span,
 			.loggedInGreeting a:focus span {
-				border-bottom: 1px solid #5656ff;
+				border-bottom: 1px solid #2d70ed;
 			}
 
 	.navExt .accountDropdownBox {
@@ -189,8 +173,8 @@ hr.alt {
 
 	.navExt #loginBtn {
 		float: right;
-		background-color: #5656ff;
-		color: #fff;
+		background-color: #bdbebf;
+		color: #000;
 		border: 1px solid rgba(0,0,0,0);
 		padding: 0 15px;
 		margin-bottom: 0 !important;
@@ -199,7 +183,7 @@ hr.alt {
 	
 	.navExt #loginBtn:hover,
 	.navExt #loginBtn:focus {
-		background-color: #3434fa;
+		background-color: #797a7a;
 		box-shadow: none;
 	}
 	
@@ -259,7 +243,7 @@ hr.alt {
 			}
 			
 			.navExt .forgotPasswordOpener {
-				color: #5656ff;
+				color: #007bff;
 				float: right;
 				background-color: transparent;
 				font-size: 16px;
@@ -275,7 +259,7 @@ hr.alt {
 			}
 			
 			.navExt #registerLink {
-				color: #5656ff;
+				color: #007bff;
 				font-size: 36px;
 				font-weight: 100;
 			}
@@ -299,19 +283,18 @@ hr.alt {
 	
 		.navbar-nav .nav-link span {
 			display: inline-block;
-			transition: color 0.25s ease;
+			transition: transform 0.25s ease;
 		}
 	
 		.navbar-nav .nav-link:hover span,
 		.navbar-nav .nav-link:focus span {
-			color: #3434fa;
-			/*transform: translate3d(0px, -4px, 0px);*/
+			transform: translate3d(0px, -4px, 0px);
 		}
 		
-		/*.navbar-nav .active .nav-link:hover span,
+		.navbar-nav .active .nav-link:hover span,
 		.navbar-nav .active .nav-link:focus span {
 			transform: translate3d(0px, 0px, 0px);
-		}*/
+		}
 	
 #navIcon {
 	top: 0px !important;
@@ -536,17 +519,17 @@ hr.alt {
 		}
 		
 		.nav-tabs .active h2 {
-			color: #5656ff;
+			color: #2d70ed;
 		}
 		
 			.nav-tabs a:hover h2,
 			.nav-tabs a:focus h2 {
-				color: #5656ff;
-				/*transform: translate3D(0, -10px, 0);*/
+				color: #2d70ed;
+				transform: translate3D(0, -10px, 0);
 			}
 			
 .verticalContentNav {
-	background-color: #5656ff;
+	background-color: #e3e4e6;
 	margin-bottom: 15px;
 }
 
@@ -673,17 +656,6 @@ hr.alt {
 				padding: 1px 29px 30px 29px;
 				color: #fff;
 				min-width: 100%;
-				transition: transform .25s ease , background-color .25s ease;
-			}
-			
-			.notransition {
-				transition: none !important;
-			}
-			
-			.tournamentContainer a:hover .bannerImageContainer .textContainer,
-			.tournamentContainer a:focus .bannerImageContainer .textContainer {
-				background-color: rgba(86,86,255,0.8);
-				transform: translateY(0) !important;
 			}
 			
 				.tournamentContainer .bannerImageContainer .textContainer .h2 {
@@ -693,12 +665,7 @@ hr.alt {
 					font-weight: 100;
 					margin-top: 24px;
 					margin-bottom: 30px;
-					transition: margin-bottom .25s ease;
-				}
-				
-				.tournamentContainer a:hover .bannerImageContainer .textContainer .h2,
-				.tournamentContainer a:focus .bannerImageContainer .textContainer .h2 {
-					margin-bottom: 10px;
+					transition: margin-bottom .5s ease;
 				}
 				
 				.tournamentContainer.detail .bannerImageContainer .textContainer .h2 {

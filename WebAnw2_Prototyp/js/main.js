@@ -1,6 +1,6 @@
 $(function() {
 	initNavToggle();
-	initCarousel();
+    initCarousel();
 	initResizeHandler();
 	initAutoHeight();
 	initMultiTabHandler();
@@ -137,24 +137,9 @@ function initAccountBoxHandler() {
 }
 
 function initTournamentBoxHandler() {
-	$('.tournamentContainer .textContainer').each(function(){
-		heightOffset = $(this).find('.description').outerHeight() + 30;
-		
-		$(this).addClass('notransition');
-		$(this).css('transform', 'translateY('+heightOffset+'px)');
-		$(this)[0].offsetHeight;
-		$(this).removeClass('notransition');
-	});
+	
 }
 
 function initAccountBoxOpener() {
-	$('#toLogin').click(function(e) {
-		e.preventDefault();
-        $("html, body").animate({ scrollTop: "0" }, 250);
-	});
 	
-	$('#toRegister').click(function(e) {
-		e.preventDefault();
-        $("html, body").animate({ scrollTop: "0" }, 250);
-	});
 }
