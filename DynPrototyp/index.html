@@ -51,7 +51,7 @@
 															<input id="loginPassword" type="password" name="lgn_pwd" class="form-control" value="" placeholder="Passwort">
 														</div>
 													</div>
-													<button type="submit" class="btn btn-primary loginButton">Anmelden</button>
+													<button id="btn_submit" type="submit" class="btn btn-primary loginButton">Anmelden</button>
 													<span>
 														<a class="forgotPasswordOpener" href=#">Passwort vergessen?</a>
 													</span>
@@ -284,5 +284,36 @@
 				</div>
 			</div>
 		</footer>
+		<script>      
+			$(document).ready(function(){
+				$("#btn_submit").click(function(e){
+					e.preventDefault();
+					console.log('BENUTZER CHECKING');
+					$email = $("#loginEmail").val();
+					$password = $("#loginPassword").val();
+					
+					$formData = {
+                        email : $email,
+                        password : $password,
+                    }
+
+                    $.ajax({
+                        type : 'POST',
+                        contentType : 'application/json',
+                        url : 'http://localhost:8000/api/user/check',
+                        data : JSON.stringify($formData),
+                        dataType : 'json',
+                        success : function(user) {
+                            console.log("great success");
+							setCookie("loggedIn", $password, 7);
+                        },
+                        error : function(e) {
+                            alert("Error!")
+                            console.log("ERROR: ", e);
+                        }
+                    });
+				});
+			});
+        </script>
 	</body>
 </html>
