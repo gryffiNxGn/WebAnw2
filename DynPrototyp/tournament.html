@@ -15,8 +15,8 @@
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 		<script src="https://kit.fontawesome.com/757184edd7.js" crossorigin="anonymous"></script>
 		<script src="js/main.js"></script>
+		<script src="js/tournament.js"></script>
 		<script src="js/sessionHandling.js"></script>
-		<script src="js/shopAndBasket.js"></script>
 		<script src="js/urlParameter.js"></script>
 	</head>
 	<body>
@@ -157,50 +157,5 @@
 				</div>
 			</div>
 		</footer>
-		<script>      
-			$(document).ready(function() {
-				$.ajax({
-					url: 'http://localhost:8000/api/tournament/alle',
-					method: 'get',
-					dataType: 'json'
-				}).done(function (response) {
-					var content = '';
-
-					for (i = 0; i < response.daten.length; i++) {
-						var obj = response.daten[i];
-
-						content += '<div class="col-lg-4 col-md-6">';
-						content += '<div class="tournamentContainer">';
-						console.log(obj.id);
-						content += '<a href="tournamentdetail.html?id=' + obj.id + '">';
-						content += '<span class="bannerImageContainer container-block">';
-						
-						content += '<img src="' + obj.picture + '" class="img-responsive center-block" alt="' + obj.picture.replace('img/', '').replace('.jpg', '') + '">';
-						
-						content += '<div class="textContainer">';
-						content += '<div class="h2 container-block">';
-						content += obj.title + '<br>';
-						content += obj.date;
-						content += '</div>';
-						content += '<span class="description">';
-						content += obj.shortdescription;
-						content += '</span>';
-						content += '</div>';
-						
-						
-						content += '</div>';
-						content += '</span>';
-						content += '</a>';
-						content += '</div>';
-						content += '</div>';
-					}
-
-					$('#dyntarget').replaceWith(content);
-					
-				}).fail(function (jqXHR, statusText, error) {
-					alert(jqXHR.responseText);
-				});
-			});
-        </script>
 	</body>
 </html>

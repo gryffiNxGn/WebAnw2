@@ -48,10 +48,10 @@
 													</div>
 													<div class="form-group">
 														<div class="input-group">
-															<input id="loginPassword" type="password" name="lgn_pwd" class="form-control" value="" placeholder="Passwort">
+															<input id="loginPassword" type="password" name="lgn_pwd" class="form-control" value="" placeholder="Passwort" maxlength="26">
 														</div>
 													</div>
-													<button type="submit" class="btn btn-primary loginButton">Anmelden</button>
+													<button id="loginButton" type="submit" class="btn btn-primary loginButton">Anmelden</button>
 													<span>
 														<a class="forgotPasswordOpener" href=#">Passwort vergessen?</a>
 													</span>
@@ -74,29 +74,37 @@
 												<form class="form" id="register" name="register" action="#" method="post">
 													<span class="lead">Registrieren</span>
 													<div class="form-group">
-														<input id="registerNick" type="nick" name="reg_nick" value="" class="form-control" placeholder="Nickname">
-													</div>
-													<div class="form-group">
 														<div class="input-group">
-															<input id="registerName" type="name" name="reg_name" class="form-control" value="" placeholder="Name">
+															<p id="regNickInvalid">Nickname ungültig: 3-12 Zeichen</p>
+															<input id="registerNick" type="nick" name="reg_nick" value="" class="form-control" placeholder="Nickname" maxlength="12">
 														</div>
 													</div>
 													<div class="form-group">
 														<div class="input-group">
+															<p id="regNameInvalid">Name ungültig: 3-26 Zeichen</p>
+															<input id="registerName" type="name" name="reg_name" class="form-control" value="" placeholder="Name" maxlength="26">
+														</div>
+													</div>
+													<div class="form-group">
+														<div class="input-group">
+															<p id="regEmailTaken">E-Mail bereits registriert</p>
+															<p id="regEmailInvalid">E-Mail ungültig</p>
 															<input id="registerEmail" type="email" name="reg_usr" value="" class="form-control" placeholder="E-Mail">
 														</div>
 													</div>
 													<div class="form-group">
 														<div class="input-group">
-															<input id="registerPassword" type="password" name="reg_pwd" class="form-control" value="" placeholder="Passwort">
+															<p id="regPasswordInvalid">Passwort ungültig: 6-26 Zeichen</p>
+															<input id="registerPassword" type="password" name="reg_pwd" class="form-control" value="" placeholder="Passwort" maxlength="26">
 														</div>
 													</div>
 													<div class="form-group">
 														<div class="input-group">
-															<input id="registerPasswordRepeat" type="passwordRepeat" name="reg_pwdc" class="form-control" value="" placeholder="Passwort wiederholen">
+															<p id="regPasswordRepeatInvalid">Passwort stimmt nicht überein</p>
+															<input id="registerPasswordRepeat" type="password" name="reg_pwdc" class="form-control" value="" placeholder="Passwort wiederholen" maxlength="26">
 														</div>
 													</div>
-													<button type="submit" class="btn btn-primary loginButton">Registrieren</button>
+													<button id="regButton" type="submit" class="btn btn-primary loginButton">Registrieren</button>
 												</form>
 											</div>
 										</div>
