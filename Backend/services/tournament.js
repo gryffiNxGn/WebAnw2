@@ -78,6 +78,44 @@ serviceRouter.get('/tournament/existiert/:id', function(request, response) {
     }
 });
 
+serviceRouter.post('/tournament/showRegistered', authenticateToken, (request, response) => {
+    helper.log('Service Tournament: Client requested registered tournament records');
+
+    const tournamentDao = new TournamentDao(request.app.locals.dbConnection);
+    try {
+        var result = tournamentDao.loadRegistered(request.user.email);
+        helper.log('Service Tournament: Records loaded, count=' + result.length);
+        response.status(200).json(helper.jsonMsgOK(result));
+    } catch (ex) {
+        helper.logError('Service Tournament: Error loading registered records. Exception occured: ' + ex.message);
+        response.status(400).json(helper.jsonMsgError(ex.message));
+    }
+});
+
+serviceRouter.post('/tournament/tournamentPlaner', function(request, response) {
+	helper.log('Service Tournament: Client TournamentPlaner');
+	
+	var errorMsgs=[];
+    if (helper.isUndefined(request.body.id)) 
+        errorMsgs.push('(page)id missing');
+	
+	if (errorMsgs.length > 0) {
+        helper.log('Service Tournament: Getting TournamentPlaner not possible, data missing');
+        response.status(400).json(helper.jsonMsgError('Getting TournamentPlaner not possible, data missing: ' + helper.concatArray(errorMsgs)));
+        return;
+    }
+	
+	const tournamentDao = new TournamentDao(request.app.locals.dbConnection);
+    try {
+        var result = tournamentDao.getTournamentPlaner(request.body.id);
+        helper.log('Service Tournament: Displaying TournamentPlaner');
+        response.status(200).json(helper.jsonMsgOK(result));
+    } catch (ex) {
+        helper.logError('Service Tournament: Error displaying TournamentPlaner. Exception occured: ' + ex.message);
+        response.status(400).json(helper.jsonMsgError(ex.message));
+    }    
+});
+
 serviceRouter.post('/tournament/tournamentPlaner', function(request, response) {
 	helper.log('Service Tournament: Client TournamentPlaner');
 	

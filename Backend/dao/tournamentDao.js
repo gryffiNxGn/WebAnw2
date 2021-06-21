@@ -33,6 +33,39 @@ class TournamentDao {
         
         return helper.arrayObjectKeysToLower(result);
     }
+	
+	loadRegistered(email) {
+		var sql = 'SELECT ID FROM User WHERE Email=?';
+		var statement = this._conn.prepare(sql);
+		var result = statement.get(email);
+		var userid = result.ID;
+		
+		var sql = 'SELECT COUNT(ID) AS cnt FROM TournamentRegistrant WHERE UserID=?';
+        var statement = this._conn.prepare(sql);
+        var result = statement.get(userid);
+		
+		if (result.cnt >= 1) {
+			var sql = 'SELECT ID FROM TournamentRegistrant WHERE UserID=?';
+			var statement = this._conn.prepare(sql);
+			var result = statement.get(userid);
+			var tournamentRegistrantID = result.ID;
+			
+			var sql = 'SELECT TournamentID FROM TournamentRegistration WHERE TournamentRegistrantID=?';
+			var statement = this._conn.prepare(sql);
+			var result = statement.all(tournamentRegistrantID);
+			
+			var registeredTournaments = [];
+			for (var id in result) {
+				var sql = 'SELECT * FROM Tournament WHERE ID=?';
+				var statement = this._conn.prepare(sql);
+				var result2 = statement.all(result[id].TournamentID)
+				registeredTournaments.push(helper.arrayObjectKeysToLower(result2)[0]);
+			}
+		} else {
+			return [];
+		}
+        return helper.arrayObjectKeysToLower(registeredTournaments);
+    }
 
     exists(id) {
         var sql = 'SELECT COUNT(ID) AS cnt FROM Tournament WHERE ID=?';
@@ -45,7 +78,7 @@ class TournamentDao {
         return false;
     }
 
-	create(picture = '', title = '', date = '', shortdescription = '', description = '') {
+	create(picture, title, date, shortdescription, description) {
         var sql = 'INSERT INTO Tournament (Picture,Title,Date,ShortDescription,Description) VALUES (?,?)';
         var statement = this._conn.prepare(sql);
         var params = [picture, title, date, shortdescription, description];
@@ -58,7 +91,7 @@ class TournamentDao {
         return newObj;
     }
 
-    update(id, picture = '', title = '', date = '', shortdescription = '', description = '') {
+    update(id, picture, title, date, shortdescription, description) {
         var sql = 'UPDATE Tournament SET Picture=?,Title=?,Date=?,ShortDescription=?,Description=? WHERE ID=?';
         var statement = this._conn.prepare(sql);
         var params = [picture, title, date, shortdescription, description, id];
@@ -90,6 +123,7 @@ class TournamentDao {
 		var $arrayBufferCounter = 0;
 		var $participants = 2;
 		
+		//TODO Recursive
 		if ($arrayLength <= 4) { // 2 Initiale Runden
 			$participants = 4;
 		} else if ($arrayLength <= 8) { // 4 Initiale Runden
