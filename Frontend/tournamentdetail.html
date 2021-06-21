@@ -274,17 +274,17 @@
 											<div class="col-sm-6">
 												<div class="form-group">
 													<label for="nickname">Nickname</label>
-													<input type="text" name="generalName" class="form-control" id="name" value="Testnick">
+													<input id="registerTournamentNick" type="text" name="generalName" class="form-control" id="name" value="">
 												</div>
 											</div>
 											<div class="col-sm-6">
 												<div class="form-group">
 													<label for="name">Name</label>
-													<input type="text" name="generalName" class="form-control" id="name" value="Max Mustermann">
+													<input id="registerTournamentName" type="text" name="generalName" class="form-control" id="name" value="">
 												</div>
 											</div>
 											<div class="col-sm-12">
-												<button type="submit" class="btn btn-primary mb-2">Anmelden</button>
+												<button id="tournamentRegisterButton" type="submit" class="btn btn-primary mb-2">Anmelden</button>
 											</div>
 										</div>
 									</form>
@@ -295,10 +295,10 @@
 											Falls Sie nicht zum Turnier erscheinen können, ist eine Abmeldung jederzeit möglich.
 										</p>
 										<div class="form-group">
-											<input type="checkbox" id="Bestätigung" name="Bestätigung">
-											<label for="Bestätigung">Hiermit bestätige ich meine Abmeldung vom Turnier</label>
+											<input type="checkbox" id="deregisterCheckbox" name="deregisterCheckbox">
+											<label id="deregisterCheckboxLabel" for="deregisterCheckbox">Hiermit bestätige ich meine Abmeldung vom Turnier</label>
 										</div>
-										<button type="submit" class="btn btn-primary mb-2">Abmelden</button>
+										<button id="tournamentDeregisterButton" type="submit" class="btn btn-primary mb-2">Abmelden</button>
 									</form>
 								</div>
 							</div>

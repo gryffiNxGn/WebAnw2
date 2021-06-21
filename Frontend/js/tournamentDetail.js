@@ -2,6 +2,8 @@ $( document ).ready(function() {
     initTournamentDetail();
 	initTournamentPlaner();
 	initTournamentPageHandler();
+	initTournamentRegister();
+	initTournamentDeregister();
 });
 
 function initTournamentDetail() {
@@ -35,32 +37,50 @@ function initTournamentDetail() {
 }
 
 function initTournamentPlaner() {
-	var matchData = {
-		teams : [
-			["Team 1", "Team 2"],
-			["Team 3", "Team 4"]
-		],
-		results : [
-			[[4,3,'Match 1'], [3,4,'Match 2']],
-			[[8,6,'Final'], [2,3,'Consolation final']]
-		]
+	$teams = [];
+	
+	$formData = {
+		id : getUrlParameterValue('id'),
 	}
+	
+	$.ajax({
+		type : 'POST',
+		contentType : 'application/json',
+		url : 'http://localhost:8000/api/tournament/tournamentPlaner',
+		data : JSON.stringify($formData),
+		dataType : 'json',
+		success : function(tournament) {
+			if (tournament.daten) {
+				$teams = tournament.daten;
+				
+				var matchData = {
+					teams : $teams,
+					results : []
+				}
 
-	function onclick(data) {
-		$('#matchCallback').text("onclick(data: '" + data + "')")
-	}
+				function onclick(data) {
+					$('#matchCallback').text("onclick(data: '" + data + "')")
+				}
 
-	function onhover(data, hover) {
-		$('#matchCallback').text("onhover(data: '" + data + "', hover: " + hover + ")")
-	}
+				function onhover(data, hover) {
+					$('#matchCallback').text("onhover(data: '" + data + "', hover: " + hover + ")")
+				}
 
-	$(function() {
-		$('#tournamentPlaner').bracket({
-			init: matchData,
-			onMatchClick: onclick,
-			onMatchHover: onhover
-		})
-	})
+				$(function() {
+					$('#tournamentPlaner').bracket({
+						init: matchData,
+						onMatchClick: onclick,
+						onMatchHover: onhover
+					})
+				})
+			} else {
+				alert("Konnte Turnierplan nicht laden");
+			}
+		},
+		error : function(e) {
+			alert("unbekannter Server-Fehler");
+		}
+	});
 }
 
 function initTournamentPageHandler() {
@@ -77,9 +97,96 @@ function initTournamentPageHandler() {
 		$registered = false;
 	});*/
 	
-	if (true) {
+	if (false) {
 		$('body').addClass('registered').removeClass('notRegistered');
 	} else {
 		$('body').addClass('notRegistered').removeClass('registered');
 	}
+	
+	/*if ($('body').hasClass('loggedIn')) {
+		$formData = {
+			userid: 1, //TODO
+		}
+		
+		$.ajax({
+			type : 'POST',
+			contentType : 'application/json',
+			url : 'http://localhost:8000/api/tournament/getUser',
+			data : JSON.stringify($formData),
+			dataType : 'json',
+			success : function(user) {
+				if (user.daten) {
+					$('#registerTournamentNick').val(user.daten.Nickname);
+					$('#registerTournamentName').val(user.daten.Name);
+				} else {
+					alert("unbekannter Server-Fehler");
+				}
+			},
+			error : function(e) {
+				alert("unbekannter Server-Fehler");
+			}
+		});
+	}*/
+}
+
+function initTournamentRegister() {
+	$('#tournamentRegisterButton').click(function(e) {
+		e.preventDefault();
+		$formData = {
+			nickname: $('#registerTournamentNick').val(),
+			name: $('#registerTournamentName').val(),
+			id : getUrlParameterValue('id'),
+			userid: 1, //TODO
+		}
+		
+		$.ajax({
+			type : 'POST',
+			contentType : 'application/json',
+			url : 'http://localhost:8000/api/tournament/register',
+			data : JSON.stringify($formData),
+			dataType : 'json',
+			success : function(tournament) {
+				if (tournament.daten) {
+					location.reload();
+				} else {
+					alert("unbekannter Server-Fehler");
+				}
+			},
+			error : function(e) {
+				alert("unbekannter Server-Fehler");
+			}
+		});
+	});
+}
+
+function initTournamentDeregister() {
+	$('#tournamentDeregisterButton').click(function(e) {
+		e.preventDefault();
+		if ($('#deregisterCheckbox').is(":checked")) {
+			$formData = {
+				id : getUrlParameterValue('id'),
+				userid: 1, //TODO
+			}
+			
+			$.ajax({
+				type : 'POST',
+				contentType : 'application/json',
+				url : 'http://localhost:8000/api/tournament/deregister',
+				data : JSON.stringify($formData),
+				dataType : 'json',
+				success : function(tournament) {
+					if (tournament) {
+						location.reload();
+					} else {
+						alert("unbekannter Server-Fehler");
+					}
+				},
+				error : function(e) {
+					alert("unbekannter Server-Fehler");
+				}
+			});
+		} else {
+			$('#deregisterCheckboxLabel').addClass('error');
+		}
+	});
 }

@@ -74,6 +74,10 @@ hr.alt {
 	margin-bottom: 45px;
 }
 
+.error {
+	color: #ff0000;
+}
+
 .btn.detail {
 	margin-bottom: 15px;
 }

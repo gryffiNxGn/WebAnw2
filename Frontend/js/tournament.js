@@ -1,6 +1,29 @@
 $( document ).ready(function() {
     initTournamentOverview();
+	initResizeHandler();
 });
+
+$(document).ajaxStop(function() {
+	initTournamentBoxHandler();
+});
+
+function initResizeHandler() {
+	$(window).on("resize orientationchange", function() {
+		$('body').removeClass('navOpen');
+		initTournamentBoxHandler();
+	});
+}
+
+function initTournamentBoxHandler() {
+	$('.tournamentContainer .textContainer').each(function(){
+		heightOffset = $(this).find('.description').outerHeight() + 30;
+		
+		$(this).addClass('notransition');
+		$(this).css('transform', 'translateY('+heightOffset+'px)');
+		$(this)[0].offsetHeight;
+		$(this).removeClass('notransition');
+	});
+}
 
 function initTournamentOverview() {
 	$.ajax({

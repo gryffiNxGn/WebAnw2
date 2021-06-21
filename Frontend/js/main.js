@@ -12,10 +12,6 @@ $(document).ready(function() {
 	//initTournamentPlanerPrototype();
 });
 
-$(document).ajaxStop(function() {
-	initTournamentBoxHandler();
-});
-
 function initNavToggle() {
 	$('.navbar-toggler').click(function(e) {
 		$('body').toggleClass('navOpen');
@@ -29,7 +25,6 @@ function initCarousel() {
 function initResizeHandler() {
 	$(window).on("resize orientationchange", function() {
 		$('body').removeClass('navOpen');
-		initTournamentBoxHandler();
 	});
 }
 
@@ -151,17 +146,6 @@ function initAccountBoxHandler() {
 	});
 }
 
-function initTournamentBoxHandler() {
-	$('.tournamentContainer .textContainer').each(function(){
-		heightOffset = $(this).find('.description').outerHeight() + 30;
-		
-		$(this).addClass('notransition');
-		$(this).css('transform', 'translateY('+heightOffset+'px)');
-		$(this)[0].offsetHeight;
-		$(this).removeClass('notransition');
-	});
-}
-
 function initAccountBoxOpener() {
 	$('#toLogin').click(function(e) {
 		e.preventDefault();
@@ -194,10 +178,14 @@ function initAccountLogin() {
 			data : JSON.stringify($formData),
 			dataType : 'json',
 			success : function(user) {
-				
+				if (user.daten) {
+					location.reload();
+				} else {
+					alert("Login fehlgeschlagen");
+				}
 			},
 			error : function(e) {
-				
+				alert("unbekannter Server-Fehler");
 			}
 		});
 	});
@@ -361,11 +349,9 @@ function initAccountRegistration() {
 			dataType : 'json',
 			success : function(user) {
 				if (user.daten) {
-					$email.removeClass('invalid').addClass('valid');
-					$regEmailTaken.removeClass('triggered');
+					location.reload();
 				} else {
-					$email.removeClass('valid').addClass('invalid');
-					$regEmailTaken.addClass('triggered');
+					alert("unbekannter Server-Fehler");
 				}
 			},
 			error : function(e) {
@@ -389,7 +375,7 @@ function initLoginPageViewHandler() {
 		$loggedIn = false;
 	});*/
 	
-	if (true) {
+	if (false) {
 		$('body').addClass('loggedIn').removeClass('loggedOut');
 	} else {
 		$('body').addClass('loggedOut').removeClass('loggedIn');
