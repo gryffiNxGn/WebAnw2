@@ -51,10 +51,8 @@ function initTournamentPlaner() {
 		dataType : 'json',
 		success : function(tournament) {
 			if (tournament.daten) {
-				$teams = tournament.daten;
-				
 				var matchData = {
-					teams : $teams,
+					teams : tournament.daten,
 					results : []
 				}
 
@@ -84,49 +82,54 @@ function initTournamentPlaner() {
 }
 
 function initTournamentPageHandler() {
-	/*$.ajax({
-		url: 'http://localhost:8000/api/staff/alle',
-		method: 'get',
-		dataType: 'json'
-	}).done(function (response) {
-			var content = '';
-		}
-		$('#dyntarget').replaceWith(content);
-		$registered = true;
-	}).fail(function (jqXHR, statusText, error) {
-		$registered = false;
-	});*/
-	
-	if (false) {
-		$('body').addClass('registered').removeClass('notRegistered');
-	} else {
-		$('body').addClass('notRegistered').removeClass('registered');
-	}
-	
-	/*if ($('body').hasClass('loggedIn')) {
+	if (localStorage.getItem("animexxUserToken")) {
 		$formData = {
-			userid: 1, //TODO
+			id : getUrlParameterValue('id')
 		}
 		
 		$.ajax({
 			type : 'POST',
 			contentType : 'application/json',
-			url : 'http://localhost:8000/api/tournament/getUser',
+			url : 'http://localhost:8000/api/tournament/checkRegister/',
 			data : JSON.stringify($formData),
 			dataType : 'json',
-			success : function(user) {
-				if (user.daten) {
-					$('#registerTournamentNick').val(user.daten.Nickname);
-					$('#registerTournamentName').val(user.daten.Name);
+			headers: {
+				'authorization': "Bearer " + localStorage.getItem("animexxUserToken") + ""
+			},
+			success : function(tournament) {
+				if (tournament.daten) {
+					$('body').addClass('registered').removeClass('notRegistered');
 				} else {
-					alert("unbekannter Server-Fehler");
+					$('body').addClass('notRegistered').removeClass('registered');
+					$.ajax({
+						type : 'POST',
+						contentType : 'application/json',
+						url : 'http://localhost:8000/api/tournament/getUser/',
+						data : JSON.stringify(),
+						dataType : 'json',
+						headers: {
+							'authorization': "Bearer " + localStorage.getItem("animexxUserToken") + ""
+						},
+						success : function(tournament) {
+							console.log(tournament);
+							if (tournament.daten) {
+								$('#registerTournamentNick').val(tournament.daten.Nickname);
+								$('#registerTournamentName').val(tournament.daten.Name);
+							} else {
+								alert("unbekannter Server-Fehler");
+							}
+						},
+						error : function(e) {
+							alert("unbekannter Server-Fehler");
+						}
+					});
 				}
 			},
 			error : function(e) {
 				alert("unbekannter Server-Fehler");
 			}
 		});
-	}*/
+	}
 }
 
 function initTournamentRegister() {
@@ -135,8 +138,7 @@ function initTournamentRegister() {
 		$formData = {
 			nickname: $('#registerTournamentNick').val(),
 			name: $('#registerTournamentName').val(),
-			id : getUrlParameterValue('id'),
-			userid: 1, //TODO
+			id : getUrlParameterValue('id')
 		}
 		
 		$.ajax({
@@ -145,6 +147,9 @@ function initTournamentRegister() {
 			url : 'http://localhost:8000/api/tournament/register',
 			data : JSON.stringify($formData),
 			dataType : 'json',
+			headers: {
+				'authorization': "Bearer " + localStorage.getItem("animexxUserToken") + ""
+			},
 			success : function(tournament) {
 				if (tournament.daten) {
 					location.reload();
@@ -165,7 +170,6 @@ function initTournamentDeregister() {
 		if ($('#deregisterCheckbox').is(":checked")) {
 			$formData = {
 				id : getUrlParameterValue('id'),
-				userid: 1, //TODO
 			}
 			
 			$.ajax({
@@ -174,6 +178,9 @@ function initTournamentDeregister() {
 				url : 'http://localhost:8000/api/tournament/deregister',
 				data : JSON.stringify($formData),
 				dataType : 'json',
+				headers: {
+					'authorization': "Bearer " + localStorage.getItem("animexxUserToken") + ""
+				},
 				success : function(tournament) {
 					if (tournament) {
 						location.reload();

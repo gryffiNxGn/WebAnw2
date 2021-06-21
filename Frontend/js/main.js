@@ -8,8 +8,8 @@ $(document).ready(function() {
 	initAccountBoxOpener();
 	initAccountLogin();
 	initAccountRegistration();
+	initAccountLogout();
 	initLoginPageViewHandler();
-	//initTournamentPlanerPrototype();
 });
 
 function initNavToggle() {
@@ -177,15 +177,16 @@ function initAccountLogin() {
 			url : 'http://localhost:8000/api/user/check',
 			data : JSON.stringify($formData),
 			dataType : 'json',
-			success : function(user) {
-				if (user.daten) {
+			success : function(response) {
+				if (response.accessToken) {
+					localStorage.setItem("animexxUserToken", response.accessToken);
 					location.reload();
 				} else {
 					alert("Login fehlgeschlagen");
 				}
 			},
 			error : function(e) {
-				alert("unbekannter Server-Fehler");
+				alert("Unbekannter Server-Fehler: Wir arbeiten schon daran!");
 			}
 		});
 	});
@@ -362,89 +363,37 @@ function initAccountRegistration() {
 }
 
 function initLoginPageViewHandler() {
-	/*$.ajax({
-		url: 'http://localhost:8000/api/staff/alle',
-		method: 'get',
-		dataType: 'json'
-	}).done(function (response) {
-			var content = '';
-		}
-		$('#dyntarget').replaceWith(content);
-		$loggedIn = true;
-	}).fail(function (jqXHR, statusText, error) {
-		$loggedIn = false;
-	});*/
-	
-	if (false) {
-		$('body').addClass('loggedIn').removeClass('loggedOut');
+	if (localStorage.getItem("animexxUserToken")) {
+		$.ajax({
+			type : 'POST',
+			contentType : 'application/json',
+			url : 'http://localhost:8000/api/user/tokenToUsername',
+			data : JSON.stringify(),
+			dataType : 'json',
+			headers: {
+				'authorization': "Bearer " + localStorage.getItem("animexxUserToken") + ""
+			},
+			success : function(response) {
+				if (response) {
+					$('body').addClass('loggedIn').removeClass('loggedOut');
+					$('#profiledyntarget').replaceWith(response.username);
+				} else {
+					$('body').addClass('loggedOut').removeClass('loggedIn');
+				}
+			},
+			error : function(e) {
+				alert("Unbekannter Server-Fehler: Wir arbeiten schon daran!");
+			}
+		});
 	} else {
 		$('body').addClass('loggedOut').removeClass('loggedIn');
 	}
 }
 
-/*function initTournamentPlanerPrototype() {
-	//$usedArray = [1,2,3,4,5]
-	//$usedArray = [1,2,3,4,5,6,7,8];
-	//$usedArray = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
-	$usedArray = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
-	$arrayLength = $usedArray.length;
-	$result = [];
-	$arrayBuffer = [[]];
-	$arrayBufferCounter = 0;
-	
-	if ($arrayLength <= 4) { // 2 Initiale Runden
-		$participants = 4;
-	} else if ($arrayLength <= 8) { // 4 Initiale Runden
-		$participants = 8;
-	} else if ($arrayLength <= 16) { // 8 Initiale Runden
-		$participants = 16;
-	} else if ($arrayLength <= 32) { // 16 Initiale Runden
-		$participants = 32;
-	} else if ($arrayLength <= 64) { // 32 Initiale Runden
-		$participants = 64;
-	} else if ($arrayLength <= 128) { // 64 Initiale Runden
-		$participants = 128;
-	}
-	
-	for ($i = 0; $i < $participants; $i++) {
-		if (typeof $usedArray[$i] === "undefined") {
-			$usedArray[$i] = null;
-		}
-	}
-	
-	sortTournament($usedArray, $participants);
-	
-	function sortTournament($array, $participants) {
-		$q1 = [];
-		$q2 = [];
-		$iq1 = 0;
-		$iq2 = 0;
-		
-		for ($i = 0; $i < $participants; $i++) {
-			if ($i % 2 == 0) {
-				$q1[$iq1] = $array[$i];
-				$iq1++;
-			} else {
-				$q2[$iq2] = $array[$i];
-				$iq2++;
-			}
-		}
-		$participants = $usedArray.length / 2;
-		$arrayBufferCounter++;
-		$arrayBuffer[$arrayBufferCounter] = [];
-		$arrayBuffer[$arrayBufferCounter].push($q1);
-		$arrayBuffer[$arrayBufferCounter].push($q2);
-		
-		if ($participants > 2) {
-			$usedArray = $arrayBuffer[$arrayBufferCounter][0];
-			sortTournament($usedArray, $participants);
-			$usedArray = $arrayBuffer[$arrayBufferCounter][1];
-			sortTournament($usedArray, $participants);
-		} else {
-			$result.push($arrayBuffer[$arrayBufferCounter][0]);
-			$result.push($arrayBuffer[$arrayBufferCounter][1]);
-		}
-		
-		$arrayBufferCounter--;
-	}
-}*/
+function initAccountLogout() {
+	$('#logoutButton').click(function(e) {
+		e.preventDefault();
+		localStorage.removeItem("animexxUserToken");
+		window.location.href = "index.html";
+    });
+}
