@@ -19,7 +19,7 @@ function authenticateToken(request, response, next) {
 		next(); //moving on from middleware
 	});
 }
-
+/*
 serviceRouter.get('/tournament/gib/:id', authenticateToken, (request, response) => {
     helper.log('Service Tournament: Client requested one record, id=' + request.params.id);
 	helper.log(request.user.name);
@@ -35,7 +35,7 @@ serviceRouter.get('/tournament/gib/:id', authenticateToken, (request, response) 
         response.status(400).json(helper.jsonMsgError(ex.message));
     }
 });
-/*
+*/
 serviceRouter.get('/tournament/gib/:id', function(request, response) {
     helper.log('Service Tournament: Client requested one record, id=' + request.params.id);
 
@@ -49,7 +49,7 @@ serviceRouter.get('/tournament/gib/:id', function(request, response) {
         response.status(400).json(helper.jsonMsgError(ex.message));
     }
 });
-*/
+
 serviceRouter.get('/tournament/alle', function(request, response) {
     helper.log('Service Tournament: Client requested all records');
 
@@ -78,6 +78,30 @@ serviceRouter.get('/tournament/existiert/:id', function(request, response) {
     }
 });
 
+serviceRouter.post('/tournament/tournamentPlaner', function(request, response) {
+	helper.log('Service Tournament: Client TournamentPlaner');
+	
+	var errorMsgs=[];
+    if (helper.isUndefined(request.body.id)) 
+        errorMsgs.push('(page)id missing');
+	
+	if (errorMsgs.length > 0) {
+        helper.log('Service Tournament: Getting TournamentPlaner not possible, data missing');
+        response.status(400).json(helper.jsonMsgError('Getting TournamentPlaner not possible, data missing: ' + helper.concatArray(errorMsgs)));
+        return;
+    }
+	
+	const tournamentDao = new TournamentDao(request.app.locals.dbConnection);
+    try {
+        var result = tournamentDao.getTournamentPlaner(request.body.id);
+        helper.log('Service Tournament: Displaying TournamentPlaner');
+        response.status(200).json(helper.jsonMsgOK(result));
+    } catch (ex) {
+        helper.logError('Service Tournament: Error displaying TournamentPlaner. Exception occured: ' + ex.message);
+        response.status(400).json(helper.jsonMsgError(ex.message));
+    }    
+});
+
 serviceRouter.post('/tournament', function(request, response) {
     helper.log('Service Tournament: Client requested creation of new record');
 
@@ -95,7 +119,7 @@ serviceRouter.post('/tournament', function(request, response) {
     
     if (errorMsgs.length > 0) {
         helper.log('Service Tournament: Creation not possible, data missing');
-        response.status(400).json(helper.jsonMsgError('Hinzufügen nicht möglich. Fehlende Daten: ' + helper.concatArray(errorMsgs)));
+        response.status(400).json(helper.jsonMsgError('Creation not possible, data missing: ' + helper.concatArray(errorMsgs)));
         return;
     }
 
@@ -110,22 +134,102 @@ serviceRouter.post('/tournament', function(request, response) {
     }    
 });
 
+serviceRouter.post('/tournament/register/', function(request, response) {
+    helper.log('Service Tournament: Client requested registration');
+
+    var errorMsgs=[];
+	if (helper.isUndefined(request.body.nickname)) 
+        errorMsgs.push('nickname missing');
+	if (helper.isUndefined(request.body.name)) 
+        errorMsgs.push('name missing');
+	if (helper.isUndefined(request.body.id)) 
+        errorMsgs.push('(page)id missing');
+	if (helper.isUndefined(request.body.userid)) 
+        errorMsgs.push('userid missing');
+	
+	if (errorMsgs.length > 0) {
+        helper.log('Service Tournament: Registration not possible, data missing');
+        response.status(400).json(helper.jsonMsgError('Registration not possible, missing data: ' + helper.concatArray(errorMsgs)));
+        return;
+    }
+
+    const tournamentDao = new TournamentDao(request.app.locals.dbConnection);
+    try {
+        var result = tournamentDao.register(request.body.id, request.body.nickname, request.body.name, request.body.userid);
+        helper.log('Service Tournament: Registration successfull');
+        response.status(200).json(helper.jsonMsgOK(result));
+    } catch (ex) {
+        helper.logError('Service Tournament: Error registering user. Exception occured: ' + ex.message);
+        response.status(400).json(helper.jsonMsgError(ex.message));
+    }
+});
+
+serviceRouter.post('/tournament/deregister/', function(request, response) {
+    helper.log('Service Tournament: Client requested deregistration');
+
+    var errorMsgs=[];
+	if (helper.isUndefined(request.body.id)) 
+        errorMsgs.push('(page)id missing');
+	if (helper.isUndefined(request.body.userid)) 
+        errorMsgs.push('userid missing');
+	
+	if (errorMsgs.length > 0) {
+        helper.log('Service Tournament: Deregistration not possible, data missing');
+        response.status(400).json(helper.jsonMsgError('Deregistration not possible, missing data: ' + helper.concatArray(errorMsgs)));
+        return;
+    }
+
+    const tournamentDao = new TournamentDao(request.app.locals.dbConnection);
+    try {
+        var result = tournamentDao.deregister(request.body.id, request.body.userid);
+        helper.log('Service Tournament: Registration successfull');
+        response.status(200).json(helper.jsonMsgOK(result));
+    } catch (ex) {
+        helper.logError('Service Tournament: Error deregistering user. Exception occured: ' + ex.message);
+        response.status(400).json(helper.jsonMsgError(ex.message));
+    }
+});
+
+serviceRouter.post('/tournament/getUser/', function(request, response) {
+    helper.log('Service Tournament: Client requested Userdata');
+
+    var errorMsgs=[];
+	if (helper.isUndefined(request.body.userid)) 
+        errorMsgs.push('userid missing');
+	
+	if (errorMsgs.length > 0) {
+        helper.log('Service Tournament: Getting User not possible, data missing');
+        response.status(400).json(helper.jsonMsgError('Getting User not possible, missing data: ' + helper.concatArray(errorMsgs)));
+        return;
+    }
+
+    const tournamentDao = new TournamentDao(request.app.locals.dbConnection);
+    try {
+        var result = tournamentDao.getUser(request.body.userid);
+        helper.log('Service Tournament: User Data successfull');
+        response.status(200).json(helper.jsonMsgOK(result));
+    } catch (ex) {
+        helper.logError('Service Tournament: Error getting user. Exception occured: ' + ex.message);
+        response.status(400).json(helper.jsonMsgError(ex.message));
+    }
+});
+
 serviceRouter.put('/tournament', function(request, response) {
     helper.log('Service Tournament: Client requested update of existing record');
 
     var errorMsgs=[];
     if (helper.isUndefined(request.body.id)) 
-        errorMsgs.push('id fehlt');
+        errorMsgs.push('id missing');
     if (helper.isUndefined(request.body.picture)) 
-        errorMsgs.push('picture fehlt');
+        errorMsgs.push('picture missing');
     if (helper.isUndefined(request.body.title)) 
-        errorMsgs.push('title fehlt');
+        errorMsgs.push('title missing');
     if (helper.isUndefined(request.body.date)) 
-        errorMsgs.push('date fehlt');
+        errorMsgs.push('date missing');
     if (helper.isUndefined(request.body.shortdescription)) 
-        errorMsgs.push('shortdescription fehlt');
+        errorMsgs.push('shortdescription missing');
     if (helper.isUndefined(request.body.description)) 
-        errorMsgs.push('description fehlt');
+        errorMsgs.push('description missing');
 
     if (errorMsgs.length > 0) {
         helper.log('Service Tournament: Update not possible, data missing');
