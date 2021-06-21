@@ -31,6 +31,7 @@ function initTournamentOverview() {
 		method: 'get',
 		dataType: 'json'
 	}).done(function (response) {
+		console.log(response);
 		var content = '';
 
 		for (i = 0; i < response.daten.length; i++) {
