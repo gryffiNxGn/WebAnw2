@@ -149,12 +149,47 @@ class TournamentDao {
 		return $result;
 	}
 	
-	register(id, nickname, name, userid) {
+	checkRegister(id, email) {
+		var sql = 'SELECT ID FROM User WHERE Email=?';
+		var statement = this._conn.prepare(sql);
+		var result = statement.get(email);
+		var userid = result.ID;
+		
+		var sql = 'SELECT COUNT(ID) AS cnt FROM TournamentRegistrant WHERE UserID=?';
+        var statement = this._conn.prepare(sql);
+        var result = statement.get(userid);
+		
+		if (result.cnt >= 1) {
+			var sql = 'SELECT ID FROM TournamentRegistrant WHERE UserID=?';
+			var statement = this._conn.prepare(sql);
+			var result = statement.get(userid);
+			var tournamentRegistrantID = result.ID;
+			
+			var sql = 'SELECT COUNT(ID) AS cnt FROM TournamentRegistration WHERE TournamentID=? AND TournamentRegistrantID=?';
+			var statement = this._conn.prepare(sql);
+			var result = statement.get(id, tournamentRegistrantID);
+			
+			if (result.cnt >= 1) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	
+	register(id, nickname, name, email) {
+		var sql = 'SELECT ID FROM User WHERE Email=?';
+		var statement = this._conn.prepare(sql);
+		var result = statement.get(email);
+		var userid = result.ID;
+		
 		var sql = 'SELECT COUNT(ID) AS cnt FROM TournamentRegistrant WHERE UserID=?';
         var statement = this._conn.prepare(sql);
         var result = statement.get(userid);
 
-        if (result.cnt == 1) {
+        if (result.cnt >= 1) {
 			var sql = 'UPDATE TournamentRegistrant SET Nickname=?,Name=? WHERE UserID=?';
 			var statement = this._conn.prepare(sql);
 			var params = [nickname, name, userid];
@@ -198,7 +233,12 @@ class TournamentDao {
 		return result;
 	}
 	
-	deregister(id, userid) {
+	deregister(id, email) {
+		var sql = 'SELECT ID FROM User WHERE Email=?';
+		var statement = this._conn.prepare(sql);
+		var result = statement.get(email);
+		var userid = result.ID;
+		
 		var sql = 'SELECT ID FROM TournamentRegistrant WHERE UserID=?';
 		var statement = this._conn.prepare(sql);
 		var result = statement.get(userid);
@@ -215,7 +255,12 @@ class TournamentDao {
 		}
 	}
 	
-	getUser(userid) {
+	getUser(email) {
+		var sql = 'SELECT ID FROM User WHERE Email=?';
+		var statement = this._conn.prepare(sql);
+		var result = statement.get(email);
+		var userid = result.ID;
+		
 		var sql = 'SELECT COUNT(ID) AS cnt FROM TournamentRegistrant WHERE UserID=?';
         var statement = this._conn.prepare(sql);
         var result = statement.get(userid);

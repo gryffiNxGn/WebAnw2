@@ -10,11 +10,11 @@ serviceRouter.use(express.json());
 function authenticateToken(request, response, next) {
 	const authHeader = request.headers['authorization'];
 	const token = authHeader && authHeader.split(' ')[1];
-	if (token == null) return res.sendStatus(401);
+	if (token == null) return response.sendStatus(401);
 	
 	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
 		if (err) {
-			return res.sendStatus(403);}
+			return response.sendStatus(403);}
 		request.user = user;
 		next();
 	});
@@ -130,7 +130,7 @@ serviceRouter.post('/user/check', async(request, response) => {
 			var result = userDao.hasaccessencrypted(request.body.email, request.body.password, correctCompare);
 			helper.log('Service User: Check if user has access, result=' + result);	
 			const email = request.body.email;
-			const user = { name: email };
+			const user = { email: email };
 			const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
 			response.json({ accessToken: accessToken });
 		}
@@ -142,6 +142,12 @@ serviceRouter.post('/user/check', async(request, response) => {
         helper.logError('Service User: Error checking if user has access. Exception occured: ' + ex.message);
         response.status(400).json(helper.jsonMsgError(ex.message));
     }
+});
+
+serviceRouter.post('/user/tokenToUsername', authenticateToken, (request, response) => {
+    helper.log('Service User: Client requested token to username');
+	response.status(200).json({
+			username: request.user.email});
 });
 
 

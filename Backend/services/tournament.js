@@ -134,44 +134,12 @@ serviceRouter.post('/tournament', function(request, response) {
     }    
 });
 
-serviceRouter.post('/tournament/register/', function(request, response) {
-    helper.log('Service Tournament: Client requested registration');
-
-    var errorMsgs=[];
-	if (helper.isUndefined(request.body.nickname)) 
-        errorMsgs.push('nickname missing');
-	if (helper.isUndefined(request.body.name)) 
-        errorMsgs.push('name missing');
-	if (helper.isUndefined(request.body.id)) 
-        errorMsgs.push('(page)id missing');
-	if (helper.isUndefined(request.body.userid)) 
-        errorMsgs.push('userid missing');
-	
-	if (errorMsgs.length > 0) {
-        helper.log('Service Tournament: Registration not possible, data missing');
-        response.status(400).json(helper.jsonMsgError('Registration not possible, missing data: ' + helper.concatArray(errorMsgs)));
-        return;
-    }
-
-    const tournamentDao = new TournamentDao(request.app.locals.dbConnection);
-    try {
-        var result = tournamentDao.register(request.body.id, request.body.nickname, request.body.name, request.body.userid);
-        helper.log('Service Tournament: Registration successfull');
-        response.status(200).json(helper.jsonMsgOK(result));
-    } catch (ex) {
-        helper.logError('Service Tournament: Error registering user. Exception occured: ' + ex.message);
-        response.status(400).json(helper.jsonMsgError(ex.message));
-    }
-});
-
-serviceRouter.post('/tournament/deregister/', function(request, response) {
-    helper.log('Service Tournament: Client requested deregistration');
+serviceRouter.post('/tournament/checkRegister/', authenticateToken, (request, response) => {
+    helper.log('Service Tournament: Client requested check if registered for this tournament');
 
     var errorMsgs=[];
 	if (helper.isUndefined(request.body.id)) 
         errorMsgs.push('(page)id missing');
-	if (helper.isUndefined(request.body.userid)) 
-        errorMsgs.push('userid missing');
 	
 	if (errorMsgs.length > 0) {
         helper.log('Service Tournament: Deregistration not possible, data missing');
@@ -181,7 +149,7 @@ serviceRouter.post('/tournament/deregister/', function(request, response) {
 
     const tournamentDao = new TournamentDao(request.app.locals.dbConnection);
     try {
-        var result = tournamentDao.deregister(request.body.id, request.body.userid);
+        var result = tournamentDao.checkRegister(request.body.id, request.user.email);
         helper.log('Service Tournament: Registration successfull');
         response.status(200).json(helper.jsonMsgOK(result));
     } catch (ex) {
@@ -190,22 +158,64 @@ serviceRouter.post('/tournament/deregister/', function(request, response) {
     }
 });
 
-serviceRouter.post('/tournament/getUser/', function(request, response) {
-    helper.log('Service Tournament: Client requested Userdata');
+serviceRouter.post('/tournament/register/', authenticateToken, (request, response) => {
+    helper.log('Service Tournament: Client requested registration');
 
     var errorMsgs=[];
-	if (helper.isUndefined(request.body.userid)) 
-        errorMsgs.push('userid missing');
+	if (helper.isUndefined(request.body.nickname)) 
+        errorMsgs.push('nickname missing');
+	if (helper.isUndefined(request.body.name)) 
+        errorMsgs.push('name missing');
+	if (helper.isUndefined(request.body.id)) 
+        errorMsgs.push('(page)id missing');
 	
 	if (errorMsgs.length > 0) {
-        helper.log('Service Tournament: Getting User not possible, data missing');
-        response.status(400).json(helper.jsonMsgError('Getting User not possible, missing data: ' + helper.concatArray(errorMsgs)));
+        helper.log('Service Tournament: Registration not possible, data missing');
+        response.status(400).json(helper.jsonMsgError('Registration not possible, missing data: ' + helper.concatArray(errorMsgs)));
         return;
     }
 
     const tournamentDao = new TournamentDao(request.app.locals.dbConnection);
     try {
-        var result = tournamentDao.getUser(request.body.userid);
+        var result = tournamentDao.register(request.body.id, request.body.nickname, request.body.name, request.user.email);
+        helper.log('Service Tournament: Registration successfull');
+        response.status(200).json(helper.jsonMsgOK(result));
+    } catch (ex) {
+        helper.logError('Service Tournament: Error registering user. Exception occured: ' + ex.message);
+        response.status(400).json(helper.jsonMsgError(ex.message));
+    }
+});
+
+serviceRouter.post('/tournament/deregister/', authenticateToken, (request, response) => {
+    helper.log('Service Tournament: Client requested deregistration');
+
+    var errorMsgs=[];
+	if (helper.isUndefined(request.body.id)) 
+        errorMsgs.push('(page)id missing');
+	
+	if (errorMsgs.length > 0) {
+        helper.log('Service Tournament: Deregistration not possible, data missing');
+        response.status(400).json(helper.jsonMsgError('Deregistration not possible, missing data: ' + helper.concatArray(errorMsgs)));
+        return;
+    }
+
+    const tournamentDao = new TournamentDao(request.app.locals.dbConnection);
+    try {
+        var result = tournamentDao.deregister(request.body.id, request.user.email);
+        helper.log('Service Tournament: Registration successfull');
+        response.status(200).json(helper.jsonMsgOK(result));
+    } catch (ex) {
+        helper.logError('Service Tournament: Error deregistering user. Exception occured: ' + ex.message);
+        response.status(400).json(helper.jsonMsgError(ex.message));
+    }
+});
+
+serviceRouter.post('/tournament/getUser/', authenticateToken, (request, response) => {
+    helper.log('Service Tournament: Client requested Userdata');
+
+    const tournamentDao = new TournamentDao(request.app.locals.dbConnection);
+    try {
+        var result = tournamentDao.getUser(request.user.email);
         helper.log('Service Tournament: User Data successfull');
         response.status(200).json(helper.jsonMsgOK(result));
     } catch (ex) {
