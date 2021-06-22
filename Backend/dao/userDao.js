@@ -146,6 +146,55 @@ class UserDao {
         return updatedObj;
     }
 
+    updateProfile(name = '', nickname='', email = '', currentEmail='') {
+		var sql = 'SELECT ID FROM User WHERE Email=?';
+		var statement = this._conn.prepare(sql);
+		var result = statement.get(currentEmail);
+		var userid = result.ID;
+		
+		var sql = 'SELECT PersonID FROM User WHERE Email=?';
+		var statement = this._conn.prepare(sql);
+		var result = statement.get(currentEmail);
+		var personid = result.PersonID;
+				
+		var sql = 'UPDATE User SET Email=? WHERE ID=?';
+		var statement = this._conn.prepare(sql);
+		var params = [email, userid];
+		var result = statement.run(params);
+
+		if (result.changes != 1)
+			throw new Error('Could not update existing Record. Data: ' + params);		
+		
+		var sql = 'UPDATE Person SET Nickname=?,Name=? WHERE ID=?';
+		var statement = this._conn.prepare(sql);
+		var params = [nickname, name, personid];
+		var result = statement.run(params);
+		
+		if (result.changes != 1)
+			throw new Error('Could not update existing Record. Data: ' + params);
+		
+		var updatedObj = this.loadById(userid);
+		return updatedObj;
+    }
+	
+    updatePassword(newPassword = '', email='') {	
+		var sql = 'SELECT ID FROM User WHERE Email=?';
+		var statement = this._conn.prepare(sql);
+		var result = statement.get(email);
+		var userid = result.ID;
+	
+		var sql = 'UPDATE User SET Password=? WHERE Email=?';
+		var statement = this._conn.prepare(sql);
+		var params = [newPassword, email];
+		var result = statement.run(params);
+
+		if (result.changes != 1)
+			throw new Error('Could not update existing Record. Data: ' + params);		
+		
+		var updatedObj = this.loadById(userid);
+		return updatedObj;
+    }
+
     delete(id) {
         try {
             var sql = 'DELETE FROM User WHERE ID=?';

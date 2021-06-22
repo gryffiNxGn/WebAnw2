@@ -243,6 +243,88 @@ serviceRouter.put('/user', function(request, response) {
     }    
 });
 
+serviceRouter.put('/user/updateProfile', authenticateToken, async (request, response) => {
+    helper.log('Service User: Client requested update of existing profile');
+	
+	var errorMsgs=[];
+    if (helper.isUndefined(request.body.name)) 
+        errorMsgs.push('name fehlt');
+    if (helper.isUndefined(request.body.nickname)) 
+        errorMsgs.push('nickname fehlt');
+	if (helper.isUndefined(request.body.email)) 
+        errorMsgs.push('email fehlt');
+	if (helper.isUndefined(request.body.password)) 
+        errorMsgs.push('password fehlt');
+
+    if (errorMsgs.length > 0) {
+        helper.log('Service User: Update not possible, data missing');
+        response.status(400).json(helper.jsonMsgError('Update nicht möglich. Fehlende Daten: ' + helper.concatArray(errorMsgs)));
+        return;
+    }
+	
+	const userDao = new UserDao(request.app.locals.dbConnection);
+	var hashedpw = userDao.loadPwByEmail(request.user.email);
+	var compare = await bcrypt.compare(request.body.password, hashedpw.Password);
+	helper.log(compare);
+	
+    try {
+		if(compare){
+			var result = userDao.updateProfile(request.body.name, request.body.nickname, request.body.email, request.user.email);
+			helper.log('Service User: Record updated, email=' + request.user.email);
+			const user = { email: request.body.email };
+			const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+			response.status(200).json({
+				result: helper.jsonMsgOK(result),
+				accessToken: accessToken});
+		}
+		else{
+			helper.logError('Service User: Error updating record by id. Exception occured: incorrect password');
+			response.status(400).json(helper.jsonMsgError("incorrect password"));
+		}
+    } catch (ex) {
+        helper.logError('Service User: Error updating record by id. Exception occured: ' + ex.message);
+        response.status(400).json(helper.jsonMsgError(ex.message));
+    }    
+});
+
+serviceRouter.put('/user/updatePassword', authenticateToken, async (request, response) => {
+    helper.log('Service User: Client requested update of existing password');
+	
+	var errorMsgs=[];
+    if (helper.isUndefined(request.body.newPassword)) 
+        errorMsgs.push('neues Passwort fehlt');
+    if (helper.isUndefined(request.body.confirmNewPassword)) 
+        errorMsgs.push('neues Passwort Bestätigung fehlt');
+	if (helper.isUndefined(request.body.oldPassword)) 
+        errorMsgs.push('altes Passwort fehlt');
+
+    if (errorMsgs.length > 0) {
+        helper.log('Service User: Update not possible, data missing');
+        response.status(400).json(helper.jsonMsgError('Update nicht möglich. Fehlende Daten: ' + helper.concatArray(errorMsgs)));
+        return;
+    }
+	
+	const userDao = new UserDao(request.app.locals.dbConnection);
+	var hashedpw = userDao.loadPwByEmail(request.user.email);
+	var compare = await bcrypt.compare(request.body.oldPassword, hashedpw.Password);
+	helper.log(compare);
+	
+    try {
+		if(request.body.newPassword===request.body.confirmNewPassword){
+			if(compare){
+				const newHashedPassword = await bcrypt.hash(request.body.newPassword, 10);
+				var result = userDao.updatePassword(newHashedPassword, request.user.email);
+				helper.log('Service User: Password updated, email=' + request.user.email);
+				response.status(200).json(helper.jsonMsgOK(result));
+			}
+		}
+    } catch (ex) {
+        helper.logError('Service User: Error updating record by id. Exception occured: ' + ex.message);
+        response.status(400).json(helper.jsonMsgError(ex.message));
+    }    
+});
+
+
 serviceRouter.delete('/user/:id', function(request, response) {
     helper.log('Service User: Client requested deletion of record, id=' + request.params.id);
 
