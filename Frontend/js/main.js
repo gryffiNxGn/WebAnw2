@@ -9,6 +9,8 @@ $(document).ready(function() {
 	initAccountLogin();
 	initAccountRegistration();
 	initAccountLogout();
+	initUpdateAccount();
+	initUpdatePassword();
 	initLoginPageViewHandler();
 });
 
@@ -186,7 +188,7 @@ function initAccountLogin() {
 				}
 			},
 			error : function(e) {
-				alert("Unbekannter Server-Fehler: Wir arbeiten schon daran!");
+				alert("Fehlgeschlagen: Falsche Anmeldedaten");
 			}
 		});
 	});
@@ -360,6 +362,75 @@ function initAccountRegistration() {
 			}
 		});
 	}
+}
+
+function initUpdateAccount() {
+	$("#btnSubmitChangeProfile").click(function(e){
+		e.preventDefault();
+		$formData = {
+			name : $('#name').val(),
+			nickname : $('#nickname').val(),
+			email : $('#email').val(),
+			password : $('#confirmPasswordProfile').val(),
+		}
+		
+		$.ajax({
+			type : 'PUT',
+			contentType : 'application/json',
+			url : 'http://localhost:8000/api/user/updateProfile',
+			data : JSON.stringify($formData),
+			dataType : 'json',
+			headers: {
+				'authorization': "Bearer " + localStorage.getItem("animexxUserToken") + ""
+			},
+			success : function(response) {
+				if (response.accessToken) {
+					localStorage.removeItem("animexxUserToken");
+					localStorage.setItem("animexxUserToken", response.accessToken);
+					window.location.href = "profile.html";
+				} else {
+					alert("Profil Bearbeitung fehlgeschlagen");
+				}
+			},
+			error : function(e) {
+				alert("Profil Bearbeitung fehlgeschlagen: falsches Passwort");
+			}
+		});
+	});
+}
+
+function initUpdatePassword() {
+	$("#btnSubmitChangePassword").click(function(e){
+		e.preventDefault();
+		$formData = {
+			newPassword : $('#newPassword').val(),
+			confirmNewPassword : $('#confirmNewPassword').val(),
+			oldPassword : $('#oldPassword').val(),
+		}
+		
+		$.ajax({
+			type : 'PUT',
+			contentType : 'application/json',
+			url : 'http://localhost:8000/api/user/updatePassword',
+			data : JSON.stringify($formData),
+			dataType : 'json',
+			headers: {
+				'authorization': "Bearer " + localStorage.getItem("animexxUserToken") + ""
+			},
+			success : function(user) {
+				if (user.daten) {
+					localStorage.removeItem("animexxUserToken");
+					window.location.href = "index.html";
+					alert("Passwort ändern erfolgreich!");
+				} else {
+					alert("Passwort ändern fehlgeschlagen!");
+				}
+			},
+			error : function(e) {
+				alert("unbekannter Server-Fehler");
+			}
+		});
+	});
 }
 
 function initLoginPageViewHandler() {
