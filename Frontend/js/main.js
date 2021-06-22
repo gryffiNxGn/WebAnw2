@@ -8,9 +8,6 @@ $(document).ready(function() {
 	initAccountBoxOpener();
 	initAccountLogin();
 	initAccountRegistration();
-	initAccountLogout();
-	initUpdateProfile();
-	initUpdatePassword();
 	initLoginPageViewHandler();
 });
 
@@ -163,14 +160,117 @@ function initAccountBoxOpener() {
 }
 
 function initAccountLogin() {
+	$('#loginEmail').focusout(function() {
+        validateEmail();
+    });
+	
+	$('#loginPassword').focusout(function() {
+        validatePassword();
+    });
+	
+	$loginEmail = $('#loginEmail');
+	$loginEmailInvalid = $('#loginEmailInvalid');
+	$loginPassword = $('#loginPassword');
+	$loginPasswordInvalid = $('#loginPasswordInvalid');
+	
+	$loginEmailError = false;
+	$loginPasswordError = false;
+	
+	function validateEmail() {
+		$loginEmailValue = $loginEmail.val();
+		$regex = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+		if($regex.test($loginEmailValue)) {
+			$formData = {
+				email : $loginEmailValue,
+			}
+			
+			$.ajax({
+				type : 'POST',
+				contentType : 'application/json',
+				url : 'http://localhost:8000/api/user/unique',
+				data : JSON.stringify($formData),
+				dataType : 'json',
+				success : function(user) {
+					if (user.daten.unique == 1) {
+						$loginEmail.removeClass('invalid').addClass('valid');
+						$loginEmailInvalid.removeClass('triggered');
+						$loginEmailError = false;
+					} else {
+						$loginEmail.removeClass('valid').addClass('invalid');
+						$loginEmailInvalid.addClass('triggered');
+						$loginEmailError = true;
+					}
+				},
+				error : function(e) {
+					alert("unbekannter Server-Fehler");
+				}
+			});
+		} else {
+			$loginEmail.removeClass('valid').addClass('invalid');
+			$loginEmailInvalid.addClass('triggered');
+			$loginEmailError = true;
+		}
+	}
+	
+	function validatePassword() {
+		$loginEmailVal = $("#loginEmail").val();
+		$loginPasswordVal = $("#loginPassword").val();
+		
+		$loginPasswordValue = $loginPassword.val();
+		if($loginPasswordValue.length >= 6 && $loginPasswordValue.length <= 26) {
+			$formData = {
+				email : $loginEmailVal,
+				password : $loginPasswordVal,
+			}
+
+			$.ajax({
+				type : 'POST',
+				contentType : 'application/json',
+				url : 'http://localhost:8000/api/user/check',
+				data : JSON.stringify($formData),
+				dataType : 'json',
+				success : function(response) {
+					console.log(response)
+					if (response.accessToken) {
+						$loginPassword.removeClass('invalid').addClass('valid');
+						$loginPasswordInvalid.removeClass('triggered');
+						$loginPasswordError = false;
+					} else {
+						$loginPassword.removeClass('valid').addClass('invalid');
+						$loginPasswordInvalid.addClass('triggered');
+						$loginPasswordError = true;
+					}
+				},
+				error : function(e) {
+					$loginPassword.removeClass('valid').addClass('invalid');
+					$loginPasswordInvalid.addClass('triggered');
+					$loginPasswordError = true;
+				}
+			});
+		} else {
+			$loginPassword.removeClass('valid').addClass('invalid');
+			$loginPasswordInvalid.addClass('triggered');
+			$loginPasswordError = true;
+		}
+	}
+	
+	
 	$("#loginButton").click(function(e){
 		e.preventDefault();
-		$loginEmail = $("#loginEmail").val();
-		$loginPassword = $("#loginPassword").val();
+        validateEmail();
+        validatePassword();
+        if ($loginEmailError == false && $loginPasswordError == false) {
+			loginAccount();
+        }
+	});
+	
+	function loginAccount() {
+		$loginEmailVal = $("#loginEmail").val();
+		$loginPasswordVal = $("#loginPassword").val();
 		
 		$formData = {
-			email : $loginEmail,
-			password : $loginPassword,
+			email : $loginEmailVal,
+			password : $loginPasswordVal,
 		}
 
 		$.ajax({
@@ -191,7 +291,7 @@ function initAccountLogin() {
 				alert("Unbekannter Server-Fehler: Wir arbeiten schon daran!");
 			}
 		});
-	});
+	}
 }
 
 function initAccountRegistration() {
@@ -390,81 +490,4 @@ function initLoginPageViewHandler() {
 	} else {
 		$('body').addClass('loggedOut').removeClass('loggedIn');
 	}
-}
-
-function initAccountLogout() {
-	$('#logoutButton').click(function(e) {
-		e.preventDefault();
-		localStorage.removeItem("animexxUserToken");
-		window.location.href = "index.html";
-    });
-}
-
-function initUpdateProfile() {
-	$("#btnSubmitChangeProfile").click(function(e){
-		e.preventDefault();
-		$formData = {
-			name : $('#name').val(),
-			nickname : $('#nickname').val(),
-			email : $('#email').val(),
-			password : $('#confirmPasswordProfile').val(),
-		}
-		
-		$.ajax({
-			type : 'PUT',
-			contentType : 'application/json',
-			url : 'http://localhost:8000/api/user/updateProfile',
-			data : JSON.stringify($formData),
-			dataType : 'json',
-			headers: {
-				'authorization': "Bearer " + localStorage.getItem("animexxUserToken") + ""
-			},
-			success : function(response) {
-				if (response.accessToken) {
-					localStorage.removeItem("animexxUserToken");
-					localStorage.setItem("animexxUserToken", response.accessToken);
-					window.location.href = "profile.html";
-				} else {
-					alert("Profil Bearbeitung fehlgeschlagen");
-				}
-			},
-			error : function(e) {
-				alert("Profil Bearbeitung fehlgeschlagen: falsches Passwort");
-			}
-		});
-	});
-}
-
-function initUpdatePassword() {
-	$("#btnSubmitChangePassword").click(function(e){
-		e.preventDefault();
-		$formData = {
-			newPassword : $('#newPassword').val(),
-			confirmNewPassword : $('#confirmNewPassword').val(),
-			oldPassword : $('#oldPassword').val(),
-		}
-		
-		$.ajax({
-			type : 'PUT',
-			contentType : 'application/json',
-			url : 'http://localhost:8000/api/user/updatePassword',
-			data : JSON.stringify($formData),
-			dataType : 'json',
-			headers: {
-				'authorization': "Bearer " + localStorage.getItem("animexxUserToken") + ""
-			},
-			success : function(user) {
-				if (user.daten) {
-					localStorage.removeItem("animexxUserToken");
-					window.location.href = "index.html";
-					alert("Passwort ändern erfolgreich!");
-				} else {
-					alert("Passwort ändern fehlgeschlagen!");
-				}
-			},
-			error : function(e) {
-				alert("unbekannter Server-Fehler");
-			}
-		});
-	});
 }

@@ -113,6 +113,10 @@ hr.alt {
 	display: none !important;
 }
 
+.inputContainer {
+	position: relative;
+}
+
 .navbar {
 	z-index: 1;
 	height: 60px;
@@ -311,7 +315,13 @@ hr.alt {
 			.navExt #registerName.invalid,
 			.navExt #registerEmail.invalid,
 			.navExt #registerPassword.invalid,
-			.navExt #registerPasswordRepeat.invalid {
+			.navExt #registerPasswordRepeat.invalid,
+			.navExt #loginEmail.invalid,
+			.navExt #loginPassword.invalid,
+			#profileNick.invalid,
+			#profileName.invalid,
+			#profileEmail.invalid,
+			#profilePassword.invalid {
 				border-color: #ff0000;
 			}
 			
@@ -319,7 +329,13 @@ hr.alt {
 			.navExt #registerName.valid,
 			.navExt #registerEmail.valid,
 			.navExt #registerPassword.valid,
-			.navExt #registerPasswordRepeat.valid {
+			.navExt #registerPasswordRepeat.valid,
+			.navExt #loginEmail.valid,
+			.navExt #loginPassword.valid,
+			#profileNick.valid,
+			#profileName.valid,
+			#profileEmail.valid,
+			#profilePassword.valid {
 				border-color: #77dd77;
 			}
 			
@@ -329,7 +345,14 @@ hr.alt {
 			.navExt #regNameInvalid,
 			.navExt #regEmailInvalid,
 			.navExt #regPasswordInvalid,
-			.navExt #regPasswordRepeatInvalid {
+			.navExt #regPasswordRepeatInvalid,
+			.navExt #loginEmailInvalid,
+			.navExt #loginPasswordInvalid, 
+			#profileNickInvalid,
+			#profileNameInvalid,
+			#profileEmailInvalid,
+			#profilePasswordInvalid,
+			#profileEmailTaken {
 				position: absolute;
 				top: -5px;
 				left: 8px;
@@ -349,8 +372,20 @@ hr.alt {
 			.navExt #regNameInvalid.triggered,
 			.navExt #regEmailInvalid.triggered,
 			.navExt #regPasswordInvalid.triggered,
-			.navExt #regPasswordRepeatInvalid.triggered {
+			.navExt #regPasswordRepeatInvalid.triggered,
+			.navExt #loginEmailInvalid.triggered,
+			.navExt #loginPasswordInvalid.triggered {
 				top: -15px;
+				opacity: 1;
+			}
+			
+			
+			#profileNickInvalid.triggered,
+			#profileNameInvalid.triggered,
+			#profileEmailInvalid.triggered,
+			#profilePasswordInvalid.triggered,
+			#profileEmailTaken.triggered {
+				top: -13px;
 				opacity: 1;
 			}
 
@@ -785,6 +820,10 @@ hr.alt {
 					}
 .tournamentPlan {
 	margin-bottom: 15px;
+}
+
+div.jQBracket .bracket {
+	margin-bottom: 30px;
 }
 
 footer {
