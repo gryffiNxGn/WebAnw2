@@ -2,8 +2,6 @@ const helper = require('../helper.js');
 const PersonDao = require('./personDao.js');
 const bcrypt = require('bcrypt');
 
-
-
 class UserDao {
 
     constructor(dbConnection) {
@@ -57,6 +55,18 @@ class UserDao {
 
         return false;
     }
+	
+	getUser(email) {
+		var sql = 'SELECT PersonID, Email FROM User WHERE Email=?';
+		var statement = this._conn.prepare(sql);
+		var result = statement.get(email);
+		
+		var sql = 'SELECT Nickname, Name FROM Person WHERE ID=?';
+		var statement = this._conn.prepare(sql);
+		var result2 = statement.get(result.PersonID);
+		
+		return Object.assign(result,result2);
+	}
 
 	isunique(email) {
         var sql = 'SELECT COUNT(ID) AS cnt FROM User WHERE Email=?';
@@ -65,7 +75,6 @@ class UserDao {
 
         return result.cnt;
     }
-
 
     hasaccessencrypted(email='', correctCompare) {
         const userDao = new UserDao(this._conn);
@@ -81,8 +90,7 @@ class UserDao {
 		else {
 			success = true;
 		}
-
-        //return this.loadById(result.ID);
+		
 		return success;
     }
 
@@ -192,7 +200,7 @@ class UserDao {
 			throw new Error('Could not update existing Record. Data: ' + params);		
 		
 		var updatedObj = this.loadById(userid);
-		return updatedObj;
+		return updatedObj.email;
     }
 
     delete(id) {

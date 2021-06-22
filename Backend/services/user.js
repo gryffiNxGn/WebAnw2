@@ -36,7 +36,6 @@ serviceRouter.get('/user/', function(request, response) {
     }
 });
 
-
 serviceRouter.get('/user/gib/:id', function(request, response) {
     helper.log('Service User: Client requested one record, id=' + request.params.id);
 
@@ -79,6 +78,20 @@ serviceRouter.get('/user/existiert/:id', function(request, response) {
     }
 });
 
+serviceRouter.post('/user/getUser/', authenticateToken, (request, response) => {
+    helper.log('Service Tournament: Client requested Userdata');
+
+    const userDao = new UserDao(request.app.locals.dbConnection);
+    try {
+        var result = userDao.getUser(request.user.email);
+        helper.log('Service Tournament: User Data successfull');
+        response.status(200).json(helper.jsonMsgOK(result));
+    } catch (ex) {
+        helper.logError('Service Tournament: Error getting user. Exception occured: ' + ex.message);
+        response.status(400).json(helper.jsonMsgError(ex.message));
+    }
+});
+
 serviceRouter.post('/user/unique', function(request, response) {
     helper.log('Service User: Client requested check, if email is unique, email=' + request.body.email);
 	var errorMsgs=[];
@@ -101,6 +114,37 @@ serviceRouter.post('/user/unique', function(request, response) {
         response.status(400).json(helper.jsonMsgError(ex.message));
     }
 });
+
+/*serviceRouter.post('/user/validatePass', async(request, response) => {
+    helper.log('Service User: Client requested check, if password valid for email' + request.body.email + request.body.password);
+	var errorMsgs=[];
+    if (helper.isUndefined(request.body.email)) 
+        errorMsgs.push('email fehlt');
+	if (helper.isUndefined(request.body.password)) 
+        errorMsgs.push('password fehlt');
+
+    if (errorMsgs.length > 0) {
+        helper.log('Service User: check not possible, data missing');
+        response.status(400).json(helper.jsonMsgError('Check not possible. Missing data: ' + helper.concatArray(errorMsgs)));
+        return;
+    }
+
+    const userDao = new UserDao(request.app.locals.dbConnection);
+    try {
+		var hashedpw = userDao.loadPwByEmail(request.body.email);
+		var correctCompare = false;
+		var compare = await bcrypt.compare(request.body.password, hashedpw.Password);
+		helper.log(compare);
+		if (compare){
+			var result = userDao.hasaccessencrypted(request.body.email, correctCompare);
+			helper.log('Service User: Check if password is valid for email=' + request.body.email + ', result=' + result);
+			response.status(200).json(helper.jsonMsgOK({ 'email': request.body.email, 'password': request.body.password, 'unique': result }));
+		}
+    } catch (ex) {
+        helper.logError('Service User: Error checking if record exists. Exception occured: ' + ex.message);
+        response.status(400).json(helper.jsonMsgError(ex.message));
+    }
+});*/
 
 // CHECK IF USER HAS ACCESS WITH ENCRPYTED PASSWORDS
 
