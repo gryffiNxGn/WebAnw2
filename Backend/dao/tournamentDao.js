@@ -123,20 +123,19 @@ class TournamentDao {
 		var $arrayBuffer = [[]];
 		var $arrayBufferCounter = 0;
 		var $participants = 2;
+		var $recCompare = 2;
 		
-		//TODO Recursive
-		if ($arrayLength <= 4) { // 2 Initiale Runden
-			$participants = 4;
-		} else if ($arrayLength <= 8) { // 4 Initiale Runden
-			$participants = 8;
-		} else if ($arrayLength <= 16) { // 8 Initiale Runden
-			$participants = 16;
-		} else if ($arrayLength <= 32) { // 16 Initiale Runden
-			$participants = 32;
-		} else if ($arrayLength <= 64) { // 32 Initiale Runden
-			$participants = 64;
-		} else if ($arrayLength <= 128) { // 64 Initiale Runden
-			$participants = 128;
+		setParticipants();
+		
+		function setParticipants() {
+			console.log('setParticipants');
+			console.log($recCompare);
+			if ($arrayLength <= $recCompare) {
+				$participants = $recCompare;
+			} else {
+				$recCompare = $recCompare * 2;
+				setParticipants();
+			}
 		}
 		
 		for (var $i = 0; $i < $participants; $i++) {
