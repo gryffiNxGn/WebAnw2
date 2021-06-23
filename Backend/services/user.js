@@ -250,7 +250,10 @@ serviceRouter.post('/user', async(request, response) => {
 		helper.log(hashedPassword);
         var result = userDao.create(request.body.name, request.body.nickname, request.body.email, hashedPassword);
         helper.log('Service User: Record inserted');
-        response.status(200).json(helper.jsonMsgOK(result));
+		const email = request.body.email;
+		const user = { email: email };
+        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+		response.json({ accessToken: accessToken });
     } catch (ex) {
         helper.logError('Service User: Error creating new record. Exception occured: ' + ex.message);
         response.status(400).json(helper.jsonMsgError(ex.message));

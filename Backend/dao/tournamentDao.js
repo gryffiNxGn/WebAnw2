@@ -114,7 +114,8 @@ class TournamentDao {
 			var sql = 'SELECT Nickname, Name FROM TournamentRegistrant WHERE ID=?';
 			var statement = this._conn.prepare(sql);
 			var result = statement.get(idArray.TournamentRegistrantID);
-			$usedArray.push(result.Nickname + ' (' + result.Name + ')');
+			//$usedArray.push(result.Nickname + ' (' + result.Name + ')');
+			$usedArray.push(result.Nickname);
 		}
 		
 		var $arrayLength = $usedArray.length;
