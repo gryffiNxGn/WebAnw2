@@ -7,6 +7,7 @@ $(document).ready(function() {
 	initAccountBoxHandler();
 	initAccountBoxOpener();
 	initAccountLogin();
+	initMailSystem();
 	initAccountRegistration();
 	initLoginPageViewHandler();
 });
@@ -40,22 +41,6 @@ function initMultiTabHandler() {
 		$('.tab-contentSecond .tab-pane.active').addClass('fade').removeClass('active');
 		$($(this).attr('href') + 'a').addClass('active').removeClass('fade');
 	});
-}
-
-function mailText(body, name, subSelector) {
-	if (subSelector == 1) {
-		mail = 'Todo@Todo.de'
-		subject = 'Allgemeine Anfrage'
-	} else if (subSelector == 2) {
-		mail = 'Todo2@Todo.de'
-		subject = 'Fundsachen Anfrage'
-	} else {
-		mail = 'Todo3@Todo.de'
-		subject = 'Stand/Flohmarkt Anfrage'
-	}
-	
-	MyAction = 'mailto:' + mail + '?Subject=' + subject + '&body=' + body + '%0D%0A%0D%0A' + name;
-	window.location.href = MyAction;
 }
 
 function initAccountBoxHandler() {
@@ -490,4 +475,49 @@ function initLoginPageViewHandler() {
 	} else {
 		$('body').addClass('loggedOut').removeClass('loggedIn');
 	}
+}
+
+function initMailSystem() {	
+	$formData = {}
+	function callMail() {
+		$.ajax({
+			type : 'POST',
+			contentType : 'application/json',
+			url : 'http://localhost:8000/api/contact',
+			data : JSON.stringify($formData),
+			dataType : 'json',
+			success : function(user) {
+				if (user) {
+					location.reload();
+				} else {
+					alert("unbekannter Server-Fehler");
+				}
+			},
+			error : function(e) {
+				alert("unbekannter Server-Fehler");
+			}
+		});
+	}
+
+	$('#btnSubmitGeneralMail').click(function(e) {
+		e.preventDefault(e);
+		$formData = {
+			name : $('#generalName').val(),
+			email : $('#generalEmail').val(),
+			subject : 'General',
+			message : $('#generalMessage').val(),
+		}
+		callMail();
+    });
+
+	$('#btnSubmitLostItemsMail').click(function(e) {
+		e.preventDefault(e);
+		$formData = {
+			name : $('#lostName').val(),
+			email : $('#lostEmail').val(),
+			subject : 'LostItems',
+			message : $('#lostMessage').val(),
+		}
+		callMail();
+    });
 }

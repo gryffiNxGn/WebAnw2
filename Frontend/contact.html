@@ -241,26 +241,34 @@
 								<form name="generalMail" action="javascript:mailText(generalMail.generalTA.value, generalMail.generalName.value, 1)">
 									<div class="form-group">
 										<label for="name">Name</label>
-										<input type="text" name="generalName" class="form-control" id="name" placeholder="Max Mustermann">
+										<input type="text" name="generalName" class="form-control" id="generalName">
+									</div>
+									<div class="form-group">
+										<label for="name">E-Mail</label>
+										<input type="text" name="generalEmail" class="form-control" id="generalEmail">
 									</div>
 									<div class="form-group">
 										<label for="message">Nachricht</label>
-										<textarea name="generalTA" class="form-control" id="message" rows="3"></textarea>
+										<textarea name="generalMessage" class="form-control" id="generalMessage" rows="3"></textarea>
 									</div>
-									<button type="submit" class="btn btn-primary mb-2">Nachricht senden</button>
+									<button id="btnSubmitGeneralMail" type="submit" class="btn btn-primary mb-2">Nachricht senden</button>
 								</form>
 							</div>
 							<div class="tab-pane fade" id="tab2">
 								<form name="lostMail" action="javascript:mailText(lostMail.lostTA.value, lostMail.lostName.value, 2)">
 									<div class="form-group">
 										<label for="name">Name</label>
-										<input type="text" name="lostName" class="form-control" id="name" placeholder="Max Mustermann">
+										<input type="text" name="lostName" class="form-control" id="lostName" placeholder="Max Mustermann">
+									</div>
+									<div class="form-group">
+										<label for="name">E-Mail</label>
+										<input type="text" name="lostEmail" class="form-control" id="lostEmail">
 									</div>
 									<div class="form-group">
 										<label for="message">Nachricht</label>
-										<textarea name="lostTA" class="form-control" id="message" rows="3"></textarea>
+										<textarea name="lostMessage" class="form-control" id="lostMessage" rows="3"></textarea>
 									</div>
-									<button type="submit" class="btn btn-primary mb-2">Nachricht senden</button>
+									<button id="btnSubmitLostItemsMail" type="submit" class="btn btn-primary mb-2">Nachricht senden</button>
 								</form>
 							</div>
 							<div class="tab-pane fade" id="tab3">
