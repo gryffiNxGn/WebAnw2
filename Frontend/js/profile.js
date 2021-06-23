@@ -11,6 +11,17 @@ $(document).ajaxStop(function() {
 	initTournamentBoxHandler();
 });
 
+function stringToHash(string) {
+	var hash = 0;
+	if (string.length == 0) return hash;
+	for (i = 0; i < string.length; i++) {
+		char = string.charCodeAt(i);
+		hash = ((hash << 5) - hash) + char;
+		hash = hash & hash;
+	}
+	return hash;
+}
+
 function initResizeHandler() {
 	$(window).on("resize orientationchange", function() {
 		$('body').removeClass('navOpen');
@@ -108,7 +119,7 @@ function initProfileData() {
 	}
 }
 
-function initChangeProfileData() {
+async function initChangeProfileData() {
 	$('#profileNick').focusout(function() {
         validateNick();
     });
@@ -139,7 +150,7 @@ function initChangeProfileData() {
 	$nameError = false;
 	$emailError = false;
 	$passwordError = false;
-	
+      
 	function validateNick() {
 		$nickValue = $nick.val();
 		if($nickValue.length >= 3 && $nickValue.length <= 12) {
@@ -260,14 +271,17 @@ function initChangeProfileData() {
 		changeProfileData();
 	});
 	
-	function changeProfileData() {
+	async function changeProfileData() {
+		$PasswordVal = $("#profilePassword").val();
+		$hashedpw = await stringToHash($PasswordVal).toString();
+		
 		$formData = {
 			name : $('#profileName').val(),
 			nickname : $('#profileNick').val(),
 			email : $('#profileEmail').val(),
-			password : $('#profilePassword').val(),
+			password : $hashedpw,
 		}
-		
+
 		$.ajax({
 			type : 'PUT',
 			contentType : 'application/json',
@@ -293,13 +307,20 @@ function initChangeProfileData() {
 	}
 }
 
-function initUpdatePassword() {
+async function initUpdatePassword() {
 	$("#btnSubmitChangePassword").click(function(e){
 		e.preventDefault();
+		$PasswordVal = $("#oldPassword").val();
+		$newPasswordVal = $("#newPassword").val();
+		$confirmNewPasswordVal = $("#confirmNewPassword").val();
+		$hashedpw = stringToHash($PasswordVal).toString();
+		$newHashedpw = stringToHash($newPasswordVal).toString();
+		$confirmNewHashedpw = stringToHash($confirmNewPasswordVal).toString();
+		
 		$formData = {
-			newPassword : $('#newPassword').val(),
-			confirmNewPassword : $('#confirmNewPassword').val(),
-			oldPassword : $('#oldPassword').val(),
+			newPassword : $newHashedpw,
+			confirmNewPassword : $confirmNewHashedpw,
+			oldPassword : $hashedpw,
 		}
 		
 		$.ajax({

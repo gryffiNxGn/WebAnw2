@@ -12,6 +12,17 @@ $(document).ready(function() {
 	initLoginPageViewHandler();
 });
 
+function stringToHash(string) {
+	var hash = 0;
+	if (string.length == 0) return hash;
+	for (i = 0; i < string.length; i++) {
+		char = string.charCodeAt(i);
+		hash = ((hash << 5) - hash) + char;
+		hash = hash & hash;
+	}
+	return hash;
+}
+
 function initNavToggle() {
 	$('.navbar-toggler').click(function(e) {
 		$('body').toggleClass('navOpen');
@@ -144,7 +155,7 @@ function initAccountBoxOpener() {
 	});
 }
 
-function initAccountLogin() {
+async function initAccountLogin() {
 	$('#loginEmail').focusout(function() {
         validateEmail();
     });
@@ -197,15 +208,16 @@ function initAccountLogin() {
 		}
 	}
 	
-	function validatePassword() {
+	async function validatePassword() {
 		$loginEmailVal = $("#loginEmail").val();
 		$loginPasswordVal = $("#loginPassword").val();
+		var hashedpw = await stringToHash($loginPasswordVal).toString();
 		
 		$loginPasswordValue = $loginPassword.val();
 		if($loginPasswordValue.length >= 6 && $loginPasswordValue.length <= 26) {
 			$formData = {
 				email : $loginEmailVal,
-				password : $loginPasswordVal,
+				password : hashedpw,
 			}
 
 			$.ajax({
@@ -215,7 +227,6 @@ function initAccountLogin() {
 				data : JSON.stringify($formData),
 				dataType : 'json',
 				success : function(response) {
-					console.log(response)
 					if (response.accessToken) {
 						$loginPassword.removeClass('invalid').addClass('valid');
 						$loginPasswordInvalid.removeClass('triggered');
@@ -249,13 +260,14 @@ function initAccountLogin() {
         }
 	});
 	
-	function loginAccount() {
+	async function loginAccount() {
 		$loginEmailVal = $("#loginEmail").val();
 		$loginPasswordVal = $("#loginPassword").val();
+		var hashedpw = await stringToHash($loginPasswordVal).toString();
 		
 		$formData = {
 			email : $loginEmailVal,
-			password : $loginPasswordVal,
+			password : hashedpw,
 		}
 
 		$.ajax({
@@ -279,7 +291,7 @@ function initAccountLogin() {
 	}
 }
 
-function initAccountRegistration() {
+async function initAccountRegistration() {
     $('#registerNick').focusout(function() {
         validateNick();
     });
@@ -422,12 +434,15 @@ function initAccountRegistration() {
         }
     });
 	
-	function createAccount() {
+	async function createAccount() {
+		$registerPasswordVal = $("#registerPassword").val();
+		var hashedpw = await stringToHash($registerPasswordVal).toString();
+		
 		$formData = {
 			name : $('#registerName').val(),
 			nickname : $('#registerNick').val(),
 			email : $('#registerEmail').val(),
-			password : $('#registerPassword').val(),
+			password : hashedpw,
 		}
 		
 		$.ajax({
@@ -524,7 +539,7 @@ function initAccountForgotPassword() {
 			dataType : 'json',
 			success : function(user) {
 				if (user) {
-					//location.reload();
+					location.reload();
 				} else {
 					alert("unbekannter Server-Fehler");
 				}
