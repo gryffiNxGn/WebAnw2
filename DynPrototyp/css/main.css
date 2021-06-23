@@ -283,6 +283,58 @@ hr.alt {
 			.navExt .dropdown-menu li .btn {
 				margin-top: 5px;
 			}
+			
+			.navExt input {
+				border-radius: .25rem !important;
+				transition: border-color 0.25s ease;
+			}
+			
+			.navExt #registerNick.invalid,
+			.navExt #registerName.invalid,
+			.navExt #registerEmail.invalid,
+			.navExt #registerPassword.invalid,
+			.navExt #registerPasswordRepeat.invalid {
+				border-color: #ff0000;
+			}
+			
+			.navExt #registerNick.valid,
+			.navExt #registerName.valid,
+			.navExt #registerEmail.valid,
+			.navExt #registerPassword.valid,
+			.navExt #registerPasswordRepeat.valid {
+				border-color: #77dd77;
+			}
+			
+			.navExt #regNickTaken,
+			.navExt #regEmailTaken,
+			.navExt #regNickInvalid,
+			.navExt #regNameInvalid,
+			.navExt #regEmailInvalid,
+			.navExt #regPasswordInvalid,
+			.navExt #regPasswordRepeatInvalid {
+				position: absolute;
+				top: -5px;
+				left: 8px;
+				padding: 0 5px;
+				pointer-events: none;
+				z-index: 100;
+				color: #ff0000;
+				display: block;
+				background-color: #fff;
+				opacity: 0;
+				transition: top 0.25s ease, opacity 0.25s ease;
+			}
+			
+			.navExt #regNickTaken.triggered,
+			.navExt #regEmailTaken.triggered,
+			.navExt #regNickInvalid.triggered,
+			.navExt #regNameInvalid.triggered,
+			.navExt #regEmailInvalid.triggered,
+			.navExt #regPasswordInvalid.triggered,
+			.navExt #regPasswordRepeatInvalid.triggered {
+				top: -15px;
+				opacity: 1;
+			}
 
 .navbar-brand {
 	max-width: 300px;
@@ -478,6 +530,10 @@ hr.alt {
 	margin-right: 0;
     width: 100vw;
     margin-left: calc(50% - 50vw);
+}
+
+.tab-pane .jQBracket {
+	margin: auto;
 }
 	
 .carousel-item {
