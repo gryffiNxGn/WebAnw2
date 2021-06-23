@@ -122,8 +122,8 @@ class TournamentDao {
 		var $result = [];
 		var $arrayBuffer = [[]];
 		var $arrayBufferCounter = 0;
-		var $participants = 2;
-		var $recCompare = 2;
+		var $participants = 4;
+		var $recCompare = 4;
 		
 		setParticipants();
 		

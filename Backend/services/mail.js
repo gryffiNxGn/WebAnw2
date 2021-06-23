@@ -7,6 +7,17 @@ var serviceRouter = express.Router();
 
 helper.log('- Service User');
 
+function stringToHash(string) {
+	var hash = 0;
+	if (string.length == 0) return hash;
+	for (i = 0; i < string.length; i++) {
+		char = string.charCodeAt(i);
+		hash = ((hash << 5) - hash) + char;
+		hash = hash & hash;
+	}
+	return hash;
+}
+
 serviceRouter.post('/contact/', function(request, response, next) {
     helper.log('Service User: Client requested sending of mail');
 	
@@ -54,8 +65,9 @@ serviceRouter.post('/forgotPassword/', async(request, response, next) => {
 	
 	const mailDao = new MailDao(request.app.locals.dbConnection);
     try {
-		var newPW = crypto.randomBytes(10).toString('hex');
-		var hashedPassword = await bcrypt.hash(newPW, 10);
+		var newPW = await crypto.randomBytes(10).toString('hex');
+		var newHashedPW = await stringToHash(newPW).toString();
+		var hashedPassword = await bcrypt.hash(newHashedPW, 10);
 		var result = mailDao.forgotPassword(request.body.email, hashedPassword, newPW);
 		response.status(200).json(helper.jsonMsgOK());
     } catch (ex) {
