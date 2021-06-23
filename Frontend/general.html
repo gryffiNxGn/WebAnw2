@@ -120,9 +120,13 @@
 												<form class="form" id="forgotPassword" name="forgotPassword" action="#" method="post">
 													<span class="lead">Zurücksetzen</span>
 													<div class="form-group">
-														<input id="loginEmail" type="email" name="lgn_usr" value="" class="form-control" placeholder="E-Mail">
+														<div class="inputContainer">
+															<p id="forgotPasswordEmailFalse">E-Mail existiert nicht</p>
+															<p id="forgotPasswordEmailInvalid">E-Mail ungültig</p>
+															<input id="forgotPasswordEmail" type="email" name="lgn_usr" value="" class="form-control" placeholder="E-Mail">
+														</div>
 													</div>
-													<button type="submit" class="btn btn-primary loginButton">Passwort zurücksetzen</button>
+													<button id="forgotPasswordButton" type="submit" class="btn btn-primary loginButton">Passwort zurücksetzen</button>
 												</form>
 											</div>
 										</div>
