@@ -321,7 +321,8 @@ hr.alt {
 			#profileNick.invalid,
 			#profileName.invalid,
 			#profileEmail.invalid,
-			#profilePassword.invalid {
+			#profilePassword.invalid,
+			#forgotPasswordEmail.invalid {
 				border-color: #ff0000;
 			}
 			
@@ -335,7 +336,8 @@ hr.alt {
 			#profileNick.valid,
 			#profileName.valid,
 			#profileEmail.valid,
-			#profilePassword.valid {
+			#profilePassword.valid,
+			#forgotPasswordEmail.valid {
 				border-color: #77dd77;
 			}
 			
@@ -352,7 +354,9 @@ hr.alt {
 			#profileNameInvalid,
 			#profileEmailInvalid,
 			#profilePasswordInvalid,
-			#profileEmailTaken {
+			#profileEmailTaken,
+			#forgotPasswordEmailFalse,
+			#forgotPasswordEmailInvalid	{
 				position: absolute;
 				top: -5px;
 				left: 8px;
@@ -374,7 +378,9 @@ hr.alt {
 			.navExt #regPasswordInvalid.triggered,
 			.navExt #regPasswordRepeatInvalid.triggered,
 			.navExt #loginEmailInvalid.triggered,
-			.navExt #loginPasswordInvalid.triggered {
+			.navExt #loginPasswordInvalid.triggered,
+			#forgotPasswordEmailFalse.triggered,
+			#forgotPasswordEmailInvalid.triggered {
 				top: -15px;
 				opacity: 1;
 			}

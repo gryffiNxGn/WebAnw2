@@ -7,8 +7,8 @@ $(document).ready(function() {
 	initAccountBoxHandler();
 	initAccountBoxOpener();
 	initAccountLogin();
-	initMailSystem();
 	initAccountRegistration();
+	initAccountForgotPassword();
 	initLoginPageViewHandler();
 });
 
@@ -368,6 +368,7 @@ function initAccountRegistration() {
 						$emailError = false;
 					} else {
 						$email.removeClass('valid').addClass('invalid');
+						$regEmailInvalid.removeClass('triggered');
 						$regEmailTaken.addClass('triggered');
 						$emailError = true;
 					}
@@ -436,8 +437,94 @@ function initAccountRegistration() {
 			data : JSON.stringify($formData),
 			dataType : 'json',
 			success : function(user) {
-				if (user.daten) {
+				if (user.accessToken) {
+					localStorage.setItem("animexxUserToken", user.accessToken);
 					location.reload();
+				} else {
+					alert("unbekannter Server-Fehler");
+				}
+			},
+			error : function(e) {
+				alert("unbekannter Server-Fehler");
+			}
+		});
+	}
+}
+
+function initAccountForgotPassword() {
+	$('#forgotPasswordEmail').focusout(function() {
+        validateEmail();
+    });
+	
+	$forgotPasswordEmail = $('#forgotPasswordEmail');
+	
+	$forgotPasswordEmailFalse = $('#forgotPasswordEmailFalse');
+	$forgotPasswordInvalid = $('#forgotPasswordEmailInvalid');
+	
+	$forgotPasswordEmailError = false;
+	
+	function validateEmail() {
+		$emailValue = $forgotPasswordEmail.val();
+		$regex = new RegExp("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+		
+		if($regex.test($emailValue)) {
+			$formData = {
+				email : $emailValue,
+			}
+			
+			$.ajax({
+				type : 'POST',
+				contentType : 'application/json',
+				url : 'http://localhost:8000/api/user/unique',
+				data : JSON.stringify($formData),
+				dataType : 'json',
+				success : function(user) {
+					if (user.daten.unique == 1) {
+						$forgotPasswordEmail.removeClass('invalid').addClass('valid');
+						$forgotPasswordInvalid.removeClass('triggered');
+						$forgotPasswordEmailFalse.removeClass('triggered');
+						$forgotPasswordEmailError = false;
+					} else {
+						$forgotPasswordEmail.removeClass('valid').addClass('invalid');
+						$forgotPasswordInvalid.removeClass('triggered');
+						$forgotPasswordEmailFalse.addClass('triggered');
+						$forgotPasswordEmailError = true;
+					}
+				},
+				error : function(e) {
+					alert("unbekannter Server-Fehler");
+				}
+			});
+		} else {
+			$forgotPasswordEmail.removeClass('valid').addClass('invalid');
+			$forgotPasswordInvalid.addClass('triggered');
+			$forgotPasswordEmailFalse.removeClass('triggered');
+			$forgotPasswordEmailError = true;
+		}
+	}
+	
+	$('#forgotPasswordButton').click(function(e) {
+		e.preventDefault();
+        validateEmail
+        if ($forgotPasswordEmailError == false) {
+			resetPassword();
+        }
+    });
+	
+	function resetPassword() {
+		$formData = {
+			email : $forgotPasswordEmail.val(),
+		}
+		
+		$.ajax({
+			type : 'POST',
+			contentType : 'application/json',
+			url : 'http://localhost:8000/api/forgotPassword',
+			data : JSON.stringify($formData),
+			dataType : 'json',
+			success : function(user) {
+				if (user) {
+					//location.reload();
 				} else {
 					alert("unbekannter Server-Fehler");
 				}
@@ -475,49 +562,4 @@ function initLoginPageViewHandler() {
 	} else {
 		$('body').addClass('loggedOut').removeClass('loggedIn');
 	}
-}
-
-function initMailSystem() {	
-	$formData = {}
-	function callMail() {
-		$.ajax({
-			type : 'POST',
-			contentType : 'application/json',
-			url : 'http://localhost:8000/api/contact',
-			data : JSON.stringify($formData),
-			dataType : 'json',
-			success : function(user) {
-				if (user) {
-					location.reload();
-				} else {
-					alert("unbekannter Server-Fehler");
-				}
-			},
-			error : function(e) {
-				alert("unbekannter Server-Fehler");
-			}
-		});
-	}
-
-	$('#btnSubmitGeneralMail').click(function(e) {
-		e.preventDefault(e);
-		$formData = {
-			name : $('#generalName').val(),
-			email : $('#generalEmail').val(),
-			subject : 'General',
-			message : $('#generalMessage').val(),
-		}
-		callMail();
-    });
-
-	$('#btnSubmitLostItemsMail').click(function(e) {
-		e.preventDefault(e);
-		$formData = {
-			name : $('#lostName').val(),
-			email : $('#lostEmail').val(),
-			subject : 'LostItems',
-			message : $('#lostMessage').val(),
-		}
-		callMail();
-    });
 }

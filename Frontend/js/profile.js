@@ -57,6 +57,10 @@ function initRegisteredTournaments() {
 				content += '</div>';
 				content += '</div>';
 			}
+			
+			if (!content) {
+				content = '<div class="col-md-12"><p>Derzeitig sind Sie für keine Turniere angemeldet</p></div>'
+			}
 
 			$('#dyntarget').replaceWith(content);
 		},
