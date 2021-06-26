@@ -4,7 +4,7 @@
   "description": "Backend for Animexx Stuttgart",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "Giesler, Michael; Huber, Maximilian",
   "license": "ISC",
